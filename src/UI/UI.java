@@ -73,7 +73,7 @@ public class UI {
      */
     public enum UIState {
 
-        SPLASH_SCREEN_STATE, ABOUT_SCREEN_STATE
+        SPLASH_SCREEN_STATE, ABOUT_SCREEN_STATE, GAME_SETUP_STATE
     }
 
     public UI() {
@@ -143,7 +143,7 @@ public class UI {
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         startButton = initButton(props.getProperty(PropertyType.START_BUTTON));
         startButton.setOnAction((ActionEvent e) -> {
-            
+            changeWorkspace(UIState.GAME_SETUP_STATE);
         });
         loadButton = initButton(props.getProperty(PropertyType.LOAD_BUTTON));
         loadButton.setOnAction((ActionEvent e) -> {
@@ -164,7 +164,29 @@ public class UI {
     }
 
     public void initAboutScreenPane() {
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
         aboutScreenPane = new Pane();
+        Label logo = new Label();
+        logo.setGraphic(new ImageView(loadImage(props.getProperty(PropertyType.LOGO_IMG))));
+        Label about = new Label("Journey through Europe is a family board game published by Ravensburger. "
+                + "The board is a map of Europe with various major cities marked, for example,\nAthens, "
+                + "Amsterdam and London. The players are given a home city from which they will begin "
+                + "and are then dealt a number of cards with various\nother cities on them. "
+                + "They must plan a route between each of the cities in their hand of cards. "
+                + "On each turn they throw a die and move between the cities.\n"
+                + "The winner is the first player to visit each of their cities "
+                + "and then return to their home base.");
+        logo.setLayoutX(paneWidth * 0.37);
+        aboutScreenPane.getChildren().add(logo);
+        about.setLayoutX(paneWidth*0.07);
+        about.setLayoutY(paneHeight*0.45);
+        aboutScreenPane.getChildren().add(about);
+        Button back = initButton(props.getProperty(PropertyType.BACK_BUTTON));
+        back.setOnAction((ActionEvent e) -> {
+            changeWorkspace(UIState.SPLASH_SCREEN_STATE);
+        });
+        back.setAlignment(Pos.TOP_LEFT);
+        aboutScreenPane.getChildren().add(back);
     }
 
     public void initMoveHistoryScreenPane() {
@@ -237,6 +259,9 @@ public class UI {
                 splashScreenPane.setVisible(false);
                 aboutScreenPane.setVisible(true);
                 break;
+            case GAME_SETUP_STATE:
+                splashScreenPane.setVisible(false);
+                gameSetupPane.setVisible(true);
         }
 
     }
