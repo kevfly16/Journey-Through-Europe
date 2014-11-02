@@ -18,12 +18,12 @@ import properties_manager.PropertiesManager;
  * @author Kevin
  */
 public class Main extends Application {
-
-    static String PROPERTY_TYPES_LIST = "property_types.txt";
+    
     static String UI_PROPERTIES_FILE_NAME = "properties.xml";
-    static String PROPERTIES_SCHEMA_FILE_NAME = "properties_schema.xsd";
+    static String PROPERTIES_SCHEMA_FILE_NAME = "schema.xsd";
     static String DATA_PATH = "./data/";
-
+    
+    @Override
     public void start(Stage primaryStage) {
         try {
             PropertiesManager props = PropertiesManager.getPropertiesManager();
@@ -49,7 +49,7 @@ public class Main extends Application {
             BorderPane mainPane = root.getMainPane();
             root.setStage(primaryStage);
 
-            Scene scene = new Scene(mainPane, mainPane.getWidth() + 20, mainPane.getHeight() + 10);
+            Scene scene = new Scene(mainPane, mainPane.getWidth(), mainPane.getHeight());
             primaryStage.setScene(scene);
             primaryStage.show();
         } catch (Exception e) {
@@ -74,7 +74,7 @@ public class Main extends Application {
         /* GAME TEXT */
         SPLASH_SCREEN_TITLE_TEXT, GAME_TITLE_TEXT, GAME_SUBHEADER_TEXT, WIN_DISPLAY_TEXT, LOSE_DISPLAY_TEXT, NEXT_LEVEL_TEXT, SELECT_LEVEL_TEXT, RESTART_LEVEL_TEXT, GAME_RESULTS_TEXT, GUESS_LABEL, LETTER_OPTIONS, EXIT_REQUEST_TEXT, YES_TEXT, NO_TEXT, DEFAULT_YES_TEXT, DEFAULT_NO_TEXT, DEFAULT_EXIT_TEXT,
         /* IMAGE FILE NAMES */
-        WINDOW_ICON, SPLASH_SCREEN_IMAGE_NAME, GAME_IMG_NAME, STATS_IMG_NAME, HELP_IMG_NAME, EXIT_IMG_NAME, NEW_GAME_IMG_NAME, HOME_IMG_NAME, WALL_IMAGE, BOX_IMAGE, PLACE_IMAGE, BOX_RED_IMAGE, SOKOBAN_IMAGE, RESTART_IMG_NAME, UNDO_IMG_NAME, BACK_IMG_NAME,
+        WINDOW_ICON, SPLASH_SCREEN_IMAGE_NAME, START_BUTTON, LOAD_BUTTON, ABOUT_BUTTON, QUIT_BUTTON,
         /* DATA FILE STUFF */
         STATS_FILE_NAME, HELP_FILE_NAME, STATS_DOC_NAME, LEVEL_FILE_NAME,
         /* AUDIO FILE STUFF */

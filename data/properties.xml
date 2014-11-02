@@ -1,1 +1,26 @@
-properties.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    The properties in this file are loaded when the Journey Through Europe game application
+    first loads.
+-->
+<properties>
+    <property_list>    
+        <property name="SPLASH_SCREEN_TITLE_TEXT"   value="Journey Through Europe"></property>
+        <property name="WINDOW_WIDTH"               value="1200"></property>
+        <property name="WINDOW_HEIGHT"              value="720"></property>
+        <property name="SPLASH_SCREEN_IMAGE_NAME"   value="Game.png"></property>
+        <property name="DATA_PATH"                  value="./data/"></property>
+        <property name="IMG_PATH"                   value="./images/"></property>
+        <property name="MUS_PATH"                   value="./music/"></property>
+        <property name="LETTERS_FONT_FAMILY"        value="monospaced"></property>
+        <property name="LETTERS_FONT_SIZE"          value="24"></property>
+        <property name="DEFAULT_YES_TEXT"           value="Yes"></property>
+        <property name="DEFAULT_NO_TEXT"            value="No"></property>
+        <property name="THEME_AUDIO"                value="Theme.mp3"></property>
+    </property_list>
+    <property_options_list>
+        <property_options name="LANGUAGE_FILE">
+            <option>EN.xml</option>
+        </property_options>
+    </property_options_list>
+</properties>

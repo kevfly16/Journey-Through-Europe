@@ -5,10 +5,17 @@
  */
 package UI;
 
+import java.util.TimerTask;
+
 /**
  *
  * @author Kevin
  */
-public class CardAnimation {
+public class CardAnimation extends TimerTask {
+
+    @Override
+    public void run() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

@@ -5,10 +5,17 @@
  */
 package UI;
 
+import java.util.TimerTask;
+
 /**
  *
  * @author Kevin
  */
-public class MoveAnimation {
+public class MoveAnimation extends TimerTask {
+
+    @Override
+    public void run() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

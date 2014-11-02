@@ -1,1 +1,41 @@
-EN.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+    <property_list>    
+        <property name="GAME_TITLE_TEXT" value="Sokoban"></property>
+        
+        <!-- THESE ARE THE GUI IMAGES -->
+        <property name="START_BUTTON"           value="start.png"></property>
+        <property name="LOAD_BUTTON"            value="load.png"></property>
+        <property name="ABOUT_BUTTON"           value="about.png"></property>
+        <property name="QUIT_BUTTON"            value="quit.png"></property>
+        
+        <!-- DATA FILES TO LOAD -->
+        <property name="STATS_FILE_NAME"        value="EN_StatsDisplay.html"></property>
+        <property name="LEVEL_FILE_NAME"        value="EN_LevelDisplay.html"></property>
+        <property name="HELP_FILE_NAME"         value="EN_Help.html"></property>
+
+        
+        <!-- IN-GAME TEXT -->
+        <property name="WIN_DISPLAY_TEXT"       value="You Won!"></property>
+        <property name="LOSE_DISPLAY_TEXT"      value="You Lost!"></property>
+        <property name="NEXT_LEVEL_TEXT"        value="Next Level"></property>
+        <property name="SELECT_LEVEL_TEXT"      value="Level Select"></property>
+        <property name="RESTART_LEVEL_TEXT"     value="Restart"></property>
+        <property name="GAME_RESULTS_TEXT"      value="GAME RESULTS"></property>
+        <property name="EXIT_REQUEST_TEXT"      value="Are you sure you wish to Quit?"></property>
+        <property name="YES_TEXT"               value="Yes"></property>
+        <property name="NO_TEXT"                value="No"></property>
+        
+        <!-- TOOLTIPS -->
+        <property name="GAME_TOOLTIP"           value="Go to Game Screen"></property>
+        <property name="STATS_TOOLTIP"          value="Go to Stats Summary Screen"></property>
+        <property name="HELP_TOOLTIP"           value="Go to Help Screen"></property>
+        <property name="EXIT_TOOLTIP"           value="Exit the Game Application"></property>
+        <property name="NEW_GAME_TOOLTIP"       value="Start a New Game"></property>
+        
+    </property_list>    
+    <property_options_list>
+        <property_options name="USED_TO_FIT_SCHEMA">
+        </property_options>
+    </property_options_list>
+</properties>
