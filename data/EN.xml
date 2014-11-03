@@ -9,12 +9,14 @@
         <property name="ABOUT_BUTTON"           value="about.png"></property>
         <property name="QUIT_BUTTON"            value="quit.png"></property>
         <property name="BACK_BUTTON"            value="back.png"></property>
+        <property name="HISTORY_BUTTON"         value="history.png"></property>
         <property name="GO_BUTTON"              value="go.png"></property>
         <property name="LOGO_IMG"               value="logo.jpg"></property>
 
         
         <!-- DATA FILES TO LOAD -->
         <property name="ABOUT_FILE_NAME"        value="about.html"></property>
+        <property name="HISTORY_FILE_NAME"      value="history.html"></property>
         
         <!-- IN-GAME TEXT -->
         <property name="WIN_DISPLAY_TEXT"       value="You Won!"></property>

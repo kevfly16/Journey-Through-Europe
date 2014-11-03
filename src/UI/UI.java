@@ -96,6 +96,7 @@ public class UI {
     private WebEngine webEngine;
     private Pane previousScreenPane;
     private boolean dragging;
+    private Label cityName;
 
     /**
      * The SokobanUIState represents the four screen states that are possible
@@ -104,7 +105,7 @@ public class UI {
      */
     public enum UIState {
 
-        SPLASH_SCREEN_STATE, ABOUT_SCREEN_STATE, GAME_SETUP_STATE, GAMEPLAY_SCREEN_STATE, PREVIOUS_SCREEN_STATE
+        SPLASH_SCREEN_STATE, ABOUT_SCREEN_STATE, GAME_SETUP_STATE, GAMEPLAY_SCREEN_STATE, PREVIOUS_SCREEN_STATE, HISTORY_SCREEN_STATE
     }
 
     public UI() {
@@ -127,7 +128,7 @@ public class UI {
 
     }
 
-    public void initMainPane() {
+    private void initMainPane() {
         System.out.println("Init MainPane");
         marginlessInsets = new Insets(5, 5, 5, 5);
         mainPane = new BorderPane();
@@ -141,7 +142,7 @@ public class UI {
         mainPane.setStyle("-fx-background-color: #D1B48C;");
     }
 
-    public void initSplashScreenPane() {
+    private void initSplashScreenPane() {
         // INIT THE SPLASH SCREEN CONTROLS
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         String splashScreenImagePath = props
@@ -181,7 +182,7 @@ public class UI {
         });
         loadButton = initButton(props.getProperty(PropertyType.LOAD_BUTTON));
         loadButton.setOnAction((ActionEvent e) -> {
-            System.out.println("Not Yet Implemented");
+            System.out.println("TODO");
         });
         aboutButton = initButton(props.getProperty(PropertyType.ABOUT_BUTTON));
         aboutButton.setOnAction((ActionEvent e) -> {
@@ -194,7 +195,7 @@ public class UI {
         previousScreenPane = splashScreenPane;
     }
 
-    public void initGameSetupPane() {
+    private void initGameSetupPane() {
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         gameSetupPane = new GridPane();
         ChoiceBox choiceBox = new ChoiceBox();
@@ -273,7 +274,7 @@ public class UI {
         }
     }
 
-    public void initGameplayScreenPane() {
+    private void initGameplayScreenPane() {
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         gameplayScreenPane = new BorderPane();
         mapPane = new StackPane();
@@ -292,8 +293,8 @@ public class UI {
             if (!dragging) {
                 Point2D point = new Point2D(e.getX(), e.getY());
                 City city = GameData.getMap().findCity(point);
-                if(city != null) {
-                    System.out.println(city.getName());
+                if (city != null) {
+                    cityName.setText(city.getName());
                 }
             }
             dragging = false;
@@ -303,11 +304,20 @@ public class UI {
         about.setOnAction((ActionEvent e) -> {
             changeWorkspace(UIState.ABOUT_SCREEN_STATE);
         });
+
+        moveHistoryButton = initButton(props.getProperty(PropertyType.HISTORY_BUTTON));
+        moveHistoryButton.setOnAction((ActionEvent e) -> {
+            changeWorkspace(UIState.HISTORY_SCREEN_STATE);
+        });
+
+        cityName = new Label();
+        HBox top = new HBox(2);
+        top.getChildren().addAll(about, moveHistoryButton, cityName);
         gameplayScreenPane.setCenter(gamePane);
-        gameplayScreenPane.setTop(about);
+        gameplayScreenPane.setTop(top);
     }
 
-    public void initAboutScreenPane() {
+    private void initAboutScreenPane() {
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         aboutScreenPane = new Pane();
         Label logo = new Label();
@@ -316,23 +326,40 @@ public class UI {
         webEngine = browser.getEngine();
         loadPage(webEngine, PropertyType.ABOUT_FILE_NAME);
         logo.setLayoutX(paneWidth * 0.37);
-        aboutScreenPane.getChildren().add(logo);
         browser.setLayoutX(paneWidth * 0.15);
         browser.setLayoutY(paneHeight * 0.25);
-        aboutScreenPane.getChildren().add(browser);
         Button back = initButton(props.getProperty(PropertyType.BACK_BUTTON));
         back.setOnAction((ActionEvent e) -> {
             changeWorkspace(UIState.PREVIOUS_SCREEN_STATE);
         });
         back.setAlignment(Pos.TOP_LEFT);
-        aboutScreenPane.getChildren().add(back);
+        aboutScreenPane.getChildren().addAll(logo, browser, back);
     }
 
-    public void initMoveHistoryScreenPane() {
+    private void initMoveHistoryScreenPane() {
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
         moveHistoryScreenPane = new Pane();
+        ScrollPane moveScroll = new ScrollPane();
+        Label logo = new Label();
+        logo.setGraphic(new ImageView(loadImage(props.getProperty(PropertyType.LOGO_IMG))));
+        browser = new WebView();
+        webEngine = browser.getEngine();
+        loadPage(webEngine, PropertyType.HISTORY_FILE_NAME);
+        logo.setLayoutX(paneWidth * 0.37);
+        moveScroll.setContent(browser);
+        moveScroll.setMaxHeight(525);
+        moveScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        moveScroll.setLayoutX(paneWidth * 0.15);
+        moveScroll.setLayoutY(paneHeight * 0.25);
+        Button back = initButton(props.getProperty(PropertyType.BACK_BUTTON));
+        back.setOnAction((ActionEvent e) -> {
+            changeWorkspace(UIState.GAMEPLAY_SCREEN_STATE);
+        });
+        back.setAlignment(Pos.TOP_LEFT);
+        moveHistoryScreenPane.getChildren().addAll(logo, moveScroll, back);
     }
 
-    public void initWorkspace() {
+    private void initWorkspace() {
         System.out.println("Init Workspace");
         workspace = new Pane();
         workspace.getChildren().addAll(splashScreenPane, gameSetupPane,
@@ -407,6 +434,7 @@ public class UI {
             case GAMEPLAY_SCREEN_STATE:
                 previousScreenPane = gameplayScreenPane;
                 gameSetupPane.setVisible(false);
+                moveHistoryScreenPane.setVisible(false);
                 gameplayScreenPane.setVisible(true);
                 break;
             case PREVIOUS_SCREEN_STATE:
@@ -415,6 +443,11 @@ public class UI {
                 gameSetupPane.setVisible(false);
                 gameplayScreenPane.setVisible(false);
                 previousScreenPane.setVisible(true);
+                break;
+            case HISTORY_SCREEN_STATE:
+                gameplayScreenPane.setVisible(false);
+                moveHistoryScreenPane.setVisible(true);
+                break;
         }
 
     }
