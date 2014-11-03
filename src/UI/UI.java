@@ -8,19 +8,34 @@ package UI;
 import Game.GameStateManager;
 import Main.Main.PropertyType;
 import java.util.ArrayList;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import properties_manager.PropertiesManager;
 
@@ -42,8 +57,8 @@ public class UI {
     Pane mapPane;
     ImageView mapImage;
     Pane splashScreenPane;
-    Pane gameSetupPane;
-    Pane playerSelectPane;
+    GridPane gameSetupPane;
+    ArrayList<GridPane> playerSelectPanes;
     Pane gameplayScreenPane;
     Pane aboutScreenPane;
     Pane moveHistoryScreenPane;
@@ -53,7 +68,7 @@ public class UI {
     Button playButton;
     Button loadButton;
     Button quitButton;
-    Button selectPlayerButton;
+    Button goButton;
     Button startButton;
     Button moveHistoryButton;
     Button aboutButton;
@@ -63,9 +78,6 @@ public class UI {
     private String imgPath;
     Insets marginlessInsets;
 
-    private final String STYLE_RELEASED = "-fx-background-color: transparent; -fx-padding: 5, 5, 5, 5;";
-    private final String STYLE_PRESSED = "-fx-background-color: transparent; -fx-padding: 6 4 4 6;";
-    
     /**
      * The SokobanUIState represents the four screen states that are possible
      * for the Sokoban game application. Depending on which state is in current
@@ -105,6 +117,7 @@ public class UI {
                 .getProperty(PropertyType.WINDOW_HEIGHT));
         mainPane.resize(paneWidth, paneHeight);
         mainPane.setPadding(marginlessInsets);
+        mainPane.setStyle("-fx-background-color: #D1B48C;");
     }
 
     public void initSplashScreenPane() {
@@ -122,11 +135,10 @@ public class UI {
 
         Label splashScreenImageLabel = new Label();
         splashScreenImageLabel.setGraphic(splashScreenImageView);
-        
-        
+
         initSplashScreenButtons();
         splashScreenPane.getChildren().add(splashScreenImageView);
-        
+
         VBox buttons = new VBox(10);
         splashScreenPane.getChildren().add(buttons);
         buttons.setLayoutX(paneWidth * 0.45);
@@ -139,6 +151,7 @@ public class UI {
         splashScreenPane.setMaxSize(paneWidth, paneHeight);
         initTheme();
     }
+
     public void initSplashScreenButtons() {
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         startButton = initButton(props.getProperty(PropertyType.START_BUTTON));
@@ -160,7 +173,74 @@ public class UI {
     }
 
     public void initGameSetupPane() {
-        gameSetupPane = new Pane();
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        gameSetupPane = new GridPane();
+        ChoiceBox choiceBox = new ChoiceBox();
+        choiceBox.getItems().addAll("1","2","3","4","5","6");
+        choiceBox.setValue("6");
+        choiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                initPanes((int)newValue + 1);
+            }
+            
+        });
+        initPanes(6);
+        Label l = new Label("Number of Players\t");
+        goButton = initButton(props.getProperty(PropertyType.GO_BUTTON));
+        goButton.setPadding(new Insets(0, 0, 0, 5));
+        HBox top = new HBox(5);
+        ObservableList children = top.getChildren();
+        children.add(l);
+        children.add(choiceBox);
+        children.add(goButton);
+        top.setPadding(new Insets(0, 0, 10, 0));
+        gameSetupPane.add(top, 0, 0);
+
+    }
+
+    public void initPanes(int panes) {
+        for(int i = 0; playerSelectPanes != null && i < playerSelectPanes.size(); i++) {
+            gameSetupPane.getChildren().remove(playerSelectPanes.get(i));
+        }
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        // GET FLAGS
+        ArrayList<String> flags = props.getPropertyOptionsList(PropertyType.FLAG);
+        playerSelectPanes = new ArrayList();
+        for (int i = 1; i <= panes; i++) {
+            GridPane playerSelectPane = new GridPane();
+            BorderStroke stroke = new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, null);
+            playerSelectPane.setPadding(new Insets(125, 50, 125, 50));
+            playerSelectPane.setBorder(new Border(stroke));
+            Label flag = new Label();
+            flag.setGraphic(new ImageView(loadImage(flags.get(i - 1))));
+            flag.setPadding(new Insets(-10, 10, 0, 0));
+            playerSelectPane.add(flag, 0, 1);
+            ToggleGroup group = new ToggleGroup();
+            RadioButton buttonPlayer = new RadioButton("Player");
+            buttonPlayer.setPadding(new Insets(0, 30, 0, 0));
+            RadioButton buttonComputer = new RadioButton("Computer");
+            buttonComputer.setPadding(new Insets(-10, 10, 0, 0));
+            buttonPlayer.setToggleGroup(group);
+            buttonComputer.setToggleGroup(group);
+            if(i == 1)
+                buttonPlayer.setSelected(true);
+            else
+                buttonComputer.setSelected(true);
+            playerSelectPane.add(buttonPlayer, 1, 0);
+            playerSelectPane.add(buttonComputer, 1, 1);
+            Label name = new Label("Name: ");
+            playerSelectPane.add(name, 2, 0);
+            TextField nameField = new TextField("Player " + i);
+            nameField.setPrefWidth(100);
+            playerSelectPane.add(nameField, 2, 1);
+            if(i <= 3)
+                gameSetupPane.add(playerSelectPane, i - 1, 2);
+            else
+               gameSetupPane.add(playerSelectPane, i - 4, 3);
+            playerSelectPanes.add(playerSelectPane);
+        }
     }
 
     public void initAboutScreenPane() {
@@ -178,8 +258,8 @@ public class UI {
                 + "and then return to their home base.");
         logo.setLayoutX(paneWidth * 0.37);
         aboutScreenPane.getChildren().add(logo);
-        about.setLayoutX(paneWidth*0.07);
-        about.setLayoutY(paneHeight*0.45);
+        about.setLayoutX(paneWidth * 0.07);
+        about.setLayoutY(paneHeight * 0.45);
         aboutScreenPane.getChildren().add(about);
         Button back = initButton(props.getProperty(PropertyType.BACK_BUTTON));
         back.setOnAction((ActionEvent e) -> {
@@ -233,17 +313,19 @@ public class UI {
         button.setPadding(marginlessInsets);
 
         button.setOnMousePressed((MouseEvent e) -> {
-            button.setStyle(STYLE_PRESSED);
+            // FOR LATER IMPLEMENTATION
+            //button.setStyle(STYLE_PRESSED);
         });
 
         button.setOnMouseReleased((MouseEvent e) -> {
-            button.setStyle(STYLE_RELEASED);
+            // FOR LATER IMPLEMENTATION
+            //button.setStyle(STYLE_RELEASED);
         });
 
         return button;
     }
-    
-     /**
+
+    /**
      * This function selects the UI screen to display based on the uiScreen
      * argument. Note that we have 3 such screens: game, stats, and help.
      *

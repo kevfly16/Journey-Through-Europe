@@ -22,5 +22,13 @@
         <property_options name="LANGUAGE_FILE">
             <option>EN.xml</option>
         </property_options>
+        <property_options name="FLAG">
+            <option>black_flag.png</option>
+            <option>yellow_flag.png</option>
+            <option>blue_flag.png</option>
+            <option>red_flag.png</option>
+            <option>green_flag.png</option>
+            <option>white_flag.png</option>
+        </property_options>
     </property_options_list>
 </properties>

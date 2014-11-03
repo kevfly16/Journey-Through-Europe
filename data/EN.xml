@@ -9,7 +9,9 @@
         <property name="ABOUT_BUTTON"           value="about.png"></property>
         <property name="QUIT_BUTTON"            value="quit.png"></property>
         <property name="BACK_BUTTON"            value="back.png"></property>
+        <property name="GO_BUTTON"              value="go.png"></property>
         <property name="LOGO_IMG"               value="logo.jpg"></property>
+
         
         <!-- DATA FILES TO LOAD -->
         <property name="STATS_FILE_NAME"        value="EN_StatsDisplay.html"></property>
