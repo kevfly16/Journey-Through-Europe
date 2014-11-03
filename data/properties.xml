@@ -9,6 +9,8 @@
         <property name="WINDOW_WIDTH"               value="1200"></property>
         <property name="WINDOW_HEIGHT"              value="720"></property>
         <property name="SPLASH_SCREEN_IMAGE_NAME"   value="Game.png"></property>
+        <property name="CITIES_FILE"                value="cities.csv"></property>
+        <property name="MAP_IMG"                    value="gameplay.jpg"></property>
         <property name="DATA_PATH"                  value="./data/"></property>
         <property name="IMG_PATH"                   value="./images/"></property>
         <property name="MUS_PATH"                   value="./music/"></property>

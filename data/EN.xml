@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <properties>
     <property_list>    
-        <property name="GAME_TITLE_TEXT" value="Sokoban"></property>
+        <property name="GAME_TITLE_TEXT" value="Journey Through Europe"></property>
         
         <!-- THESE ARE THE GUI IMAGES -->
         <property name="START_BUTTON"           value="start.png"></property>
@@ -14,21 +14,18 @@
 
         
         <!-- DATA FILES TO LOAD -->
-        <property name="STATS_FILE_NAME"        value="EN_StatsDisplay.html"></property>
-        <property name="LEVEL_FILE_NAME"        value="EN_LevelDisplay.html"></property>
-        <property name="HELP_FILE_NAME"         value="EN_Help.html"></property>
-
+        <property name="ABOUT_FILE_NAME"        value="about.html"></property>
         
         <!-- IN-GAME TEXT -->
         <property name="WIN_DISPLAY_TEXT"       value="You Won!"></property>
         <property name="LOSE_DISPLAY_TEXT"      value="You Lost!"></property>
-        <property name="NEXT_LEVEL_TEXT"        value="Next Level"></property>
-        <property name="SELECT_LEVEL_TEXT"      value="Level Select"></property>
-        <property name="RESTART_LEVEL_TEXT"     value="Restart"></property>
-        <property name="GAME_RESULTS_TEXT"      value="GAME RESULTS"></property>
         <property name="EXIT_REQUEST_TEXT"      value="Are you sure you wish to Quit?"></property>
         <property name="YES_TEXT"               value="Yes"></property>
         <property name="NO_TEXT"                value="No"></property>
+        <property name="NAME_TEXT"              value="Name:"></property>
+        <property name="PLAYER_TEXT"            value="Player"></property>
+        <property name="COMPUTER_TEXT"          value="Computer"></property>
+        <property name="NUM_PLAYERS_TEXT"       value="Number of Players"></property>
         
         <!-- TOOLTIPS -->
         <property name="GAME_TOOLTIP"           value="Go to Game Screen"></property>

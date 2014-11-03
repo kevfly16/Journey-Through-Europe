@@ -5,20 +5,10 @@
  */
 package Game;
 
-import UI.UI;
-
 /**
  *
  * @author Kevin
  */
-public class GameStateManager {
-    private final UI ui;
-    private GameData gameData;
-    
-    public GameStateManager(UI initUI) {
-        ui = initUI;
-        gameData = new GameData();
-    }
-    
-    
+public class Move {
+
 }

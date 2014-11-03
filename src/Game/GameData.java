@@ -5,10 +5,40 @@
  */
 package Game;
 
+import File.FileLoader;
+import Main.Main;
+import Main.Main.PropertyType;
+import UI.UI;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Kevin
  */
 public class GameData {
-    
+
+    private ArrayList<Move> moves;
+    private static Map map;
+    private static ArrayList<Player> players;
+    private static HashMap<String, Card> cards;
+    private static int numCardsDealt;
+    private HashMap<String, Card> usedCards;
+    private int currentMove;
+
+    public GameData() {
+        map = new Map();
+        try {
+            FileLoader.loadCityPoints(map);
+        } catch (IOException ex) {
+            UI.getErrorHandler().processError(PropertyType.INVALID_DOC_ERROR_TEXT);
+        }
+    }
+
+    public static Map getMap() {
+        return map;
+    }
 }

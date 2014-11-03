@@ -5,19 +5,28 @@
  */
 package UI;
 
+import File.FileLoader;
+import Game.City;
+import Game.GameData;
 import Game.GameStateManager;
 import Main.Main.PropertyType;
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
@@ -36,7 +45,12 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
 import properties_manager.PropertiesManager;
 
 /**
@@ -45,38 +59,43 @@ import properties_manager.PropertiesManager;
  */
 public class UI {
 
-    GameStateManager gsm;
-    CardAnimation cardAnim;
-    MoveAnimation moveAnim;
-    DocumentManager docManager;
-    EventHandler eventHandler;
-    ErrorHandler errorHandler;
-    Stage primaryStage;
-    BorderPane mainPane;
-    Pane workspace;
-    Pane mapPane;
-    ImageView mapImage;
-    Pane splashScreenPane;
-    GridPane gameSetupPane;
-    ArrayList<GridPane> playerSelectPanes;
-    Pane gameplayScreenPane;
-    Pane aboutScreenPane;
-    Pane moveHistoryScreenPane;
-    Pane flightPlanPane;
-    int paneWidth;
-    int paneHeight;
-    Button playButton;
-    Button loadButton;
-    Button quitButton;
-    Button goButton;
-    Button startButton;
-    Button moveHistoryButton;
-    Button aboutButton;
-    Button rollButton;
-    Button flightButton;
-    ArrayList<Image> playerIcons;
+    private GameStateManager gsm;
+    private CardAnimation cardAnim;
+    private MoveAnimation moveAnim;
+    private DocumentManager docManager;
+    private EventHandler eventHandler;
+    private static ErrorHandler errorHandler;
+    private Stage primaryStage;
+    private BorderPane mainPane;
+    private Pane workspace;
+    private Pane mapPane;
+    private ScrollPane gamePane;
+    private ImageView mapImage;
+    private Pane splashScreenPane;
+    private GridPane gameSetupPane;
+    private ArrayList<GridPane> playerSelectPanes;
+    private BorderPane gameplayScreenPane;
+    private Pane aboutScreenPane;
+    private Pane moveHistoryScreenPane;
+    private Pane flightPlanPane;
+    private int paneWidth;
+    private int paneHeight;
+    private Button playButton;
+    private Button loadButton;
+    private Button quitButton;
+    private Button goButton;
+    private Button startButton;
+    private Button moveHistoryButton;
+    private Button aboutButton;
+    private Button rollButton;
+    private Button flightButton;
+    private ArrayList<Image> playerIcons;
     private String imgPath;
-    Insets marginlessInsets;
+    private Insets marginlessInsets;
+    private WebView browser;
+    private WebEngine webEngine;
+    private Pane previousScreenPane;
+    private boolean dragging;
 
     /**
      * The SokobanUIState represents the four screen states that are possible
@@ -85,24 +104,26 @@ public class UI {
      */
     public enum UIState {
 
-        SPLASH_SCREEN_STATE, ABOUT_SCREEN_STATE, GAME_SETUP_STATE
+        SPLASH_SCREEN_STATE, ABOUT_SCREEN_STATE, GAME_SETUP_STATE, GAMEPLAY_SCREEN_STATE, PREVIOUS_SCREEN_STATE
     }
 
     public UI() {
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         imgPath = "file:" + props.getProperty(PropertyType.IMG_PATH);
-        gsm = new GameStateManager();
+        gsm = new GameStateManager(this);
         cardAnim = new CardAnimation();
         moveAnim = new MoveAnimation();
         docManager = new DocumentManager();
-        eventHandler = new EventHandler();
-        errorHandler = new ErrorHandler();
+        eventHandler = new EventHandler(this);
+        errorHandler = new ErrorHandler(primaryStage);
         initMainPane();
         initSplashScreenPane();
         initGameSetupPane();
+        initGameplayScreenPane();
         initAboutScreenPane();
         initMoveHistoryScreenPane();
         initWorkspace();
+        dragging = false;
 
     }
 
@@ -170,26 +191,30 @@ public class UI {
         quitButton.setOnAction((ActionEvent e) -> {
             System.exit(0);
         });
+        previousScreenPane = splashScreenPane;
     }
 
     public void initGameSetupPane() {
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         gameSetupPane = new GridPane();
         ChoiceBox choiceBox = new ChoiceBox();
-        choiceBox.getItems().addAll("1","2","3","4","5","6");
+        choiceBox.getItems().addAll("1", "2", "3", "4", "5", "6");
         choiceBox.setValue("6");
         choiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
 
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                initPanes((int)newValue + 1);
+                initPanes((int) newValue + 1);
             }
-            
+
         });
         initPanes(6);
-        Label l = new Label("Number of Players\t");
+        Label l = new Label(props.getProperty(PropertyType.NUM_PLAYERS_TEXT) + "\t");
         goButton = initButton(props.getProperty(PropertyType.GO_BUTTON));
         goButton.setPadding(new Insets(0, 0, 0, 5));
+        goButton.setOnAction((ActionEvent e) -> {
+            eventHandler.startGame();
+        });
         HBox top = new HBox(5);
         ObservableList children = top.getChildren();
         children.add(l);
@@ -201,12 +226,15 @@ public class UI {
     }
 
     public void initPanes(int panes) {
-        for(int i = 0; playerSelectPanes != null && i < playerSelectPanes.size(); i++) {
+        for (int i = 0; playerSelectPanes != null && i < playerSelectPanes.size(); i++) {
             gameSetupPane.getChildren().remove(playerSelectPanes.get(i));
         }
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         // GET FLAGS
         ArrayList<String> flags = props.getPropertyOptionsList(PropertyType.FLAG);
+        String player = props.getProperty(PropertyType.PLAYER_TEXT);
+        String computer = props.getProperty(PropertyType.COMPUTER_TEXT);
+        String nameStr = props.getProperty(PropertyType.NAME_TEXT);
         playerSelectPanes = new ArrayList();
         for (int i = 1; i <= panes; i++) {
             GridPane playerSelectPane = new GridPane();
@@ -218,29 +246,65 @@ public class UI {
             flag.setPadding(new Insets(-10, 10, 0, 0));
             playerSelectPane.add(flag, 0, 1);
             ToggleGroup group = new ToggleGroup();
-            RadioButton buttonPlayer = new RadioButton("Player");
+            RadioButton buttonPlayer = new RadioButton(player);
             buttonPlayer.setPadding(new Insets(0, 30, 0, 0));
-            RadioButton buttonComputer = new RadioButton("Computer");
+            RadioButton buttonComputer = new RadioButton(computer);
             buttonComputer.setPadding(new Insets(-10, 10, 0, 0));
             buttonPlayer.setToggleGroup(group);
             buttonComputer.setToggleGroup(group);
-            if(i == 1)
+            if (i == 1) {
                 buttonPlayer.setSelected(true);
-            else
+            } else {
                 buttonComputer.setSelected(true);
+            }
             playerSelectPane.add(buttonPlayer, 1, 0);
             playerSelectPane.add(buttonComputer, 1, 1);
-            Label name = new Label("Name: ");
+            Label name = new Label(nameStr);
             playerSelectPane.add(name, 2, 0);
-            TextField nameField = new TextField("Player " + i);
+            TextField nameField = new TextField(player + " " + i);
             nameField.setPrefWidth(100);
             playerSelectPane.add(nameField, 2, 1);
-            if(i <= 3)
+            if (i <= 3) {
                 gameSetupPane.add(playerSelectPane, i - 1, 2);
-            else
-               gameSetupPane.add(playerSelectPane, i - 4, 3);
+            } else {
+                gameSetupPane.add(playerSelectPane, i - 4, 3);
+            }
             playerSelectPanes.add(playerSelectPane);
         }
+    }
+
+    public void initGameplayScreenPane() {
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        gameplayScreenPane = new BorderPane();
+        mapPane = new StackPane();
+        mapImage = new ImageView(loadImage(props.getProperty(PropertyType.MAP_IMG)));
+        mapPane.getChildren().setAll(mapImage);
+        // wrap the scene contents in a pannable scroll pane.
+        gamePane = createScrollPane(mapPane);
+        // center the scroll contents.
+        gamePane.setHvalue(gamePane.getHmin() + (gamePane.getHmax() - gamePane.getHmin()) / 2);
+        gamePane.setVvalue(gamePane.getVmin() + (gamePane.getVmax() - gamePane.getVmin()) / 2);
+
+        mapImage.setOnMouseDragged((MouseEvent e) -> {
+            dragging = true;
+        });
+        mapImage.setOnMouseClicked((MouseEvent e) -> {
+            if (!dragging) {
+                Point2D point = new Point2D(e.getX(), e.getY());
+                City city = GameData.getMap().findCity(point);
+                if(city != null) {
+                    System.out.println(city.getName());
+                }
+            }
+            dragging = false;
+        });
+
+        Button about = initButton(props.getProperty(PropertyType.ABOUT_BUTTON));
+        about.setOnAction((ActionEvent e) -> {
+            changeWorkspace(UIState.ABOUT_SCREEN_STATE);
+        });
+        gameplayScreenPane.setCenter(gamePane);
+        gameplayScreenPane.setTop(about);
     }
 
     public void initAboutScreenPane() {
@@ -248,22 +312,17 @@ public class UI {
         aboutScreenPane = new Pane();
         Label logo = new Label();
         logo.setGraphic(new ImageView(loadImage(props.getProperty(PropertyType.LOGO_IMG))));
-        Label about = new Label("Journey through Europe is a family board game published by Ravensburger. "
-                + "The board is a map of Europe with various major cities marked, for example,\nAthens, "
-                + "Amsterdam and London. The players are given a home city from which they will begin "
-                + "and are then dealt a number of cards with various\nother cities on them. "
-                + "They must plan a route between each of the cities in their hand of cards. "
-                + "On each turn they throw a die and move between the cities.\n"
-                + "The winner is the first player to visit each of their cities "
-                + "and then return to their home base.");
+        browser = new WebView();
+        webEngine = browser.getEngine();
+        loadPage(webEngine, PropertyType.ABOUT_FILE_NAME);
         logo.setLayoutX(paneWidth * 0.37);
         aboutScreenPane.getChildren().add(logo);
-        about.setLayoutX(paneWidth * 0.07);
-        about.setLayoutY(paneHeight * 0.45);
-        aboutScreenPane.getChildren().add(about);
+        browser.setLayoutX(paneWidth * 0.15);
+        browser.setLayoutY(paneHeight * 0.25);
+        aboutScreenPane.getChildren().add(browser);
         Button back = initButton(props.getProperty(PropertyType.BACK_BUTTON));
         back.setOnAction((ActionEvent e) -> {
-            changeWorkspace(UIState.SPLASH_SCREEN_STATE);
+            changeWorkspace(UIState.PREVIOUS_SCREEN_STATE);
         });
         back.setAlignment(Pos.TOP_LEFT);
         aboutScreenPane.getChildren().add(back);
@@ -276,15 +335,13 @@ public class UI {
     public void initWorkspace() {
         System.out.println("Init Workspace");
         workspace = new Pane();
-        ObservableList children = workspace.getChildren();
-        children.add(splashScreenPane);
-        children.add(gameSetupPane);
-        children.add(aboutScreenPane);
-        children.add(moveHistoryScreenPane);
+        workspace.getChildren().addAll(splashScreenPane, gameSetupPane,
+                aboutScreenPane, moveHistoryScreenPane, gameplayScreenPane);
         splashScreenPane.setVisible(true);
         gameSetupPane.setVisible(false);
         aboutScreenPane.setVisible(false);
         moveHistoryScreenPane.setVisible(false);
+        gameplayScreenPane.setVisible(false);
         mainPane.setCenter(workspace);
     }
 
@@ -334,17 +391,67 @@ public class UI {
     public void changeWorkspace(UIState uiScreen) {
         switch (uiScreen) {
             case SPLASH_SCREEN_STATE:
+                previousScreenPane = splashScreenPane;
                 splashScreenPane.setVisible(true);
                 aboutScreenPane.setVisible(false);
                 break;
             case ABOUT_SCREEN_STATE:
                 splashScreenPane.setVisible(false);
+                gameplayScreenPane.setVisible(false);
                 aboutScreenPane.setVisible(true);
                 break;
             case GAME_SETUP_STATE:
                 splashScreenPane.setVisible(false);
                 gameSetupPane.setVisible(true);
+                break;
+            case GAMEPLAY_SCREEN_STATE:
+                previousScreenPane = gameplayScreenPane;
+                gameSetupPane.setVisible(false);
+                gameplayScreenPane.setVisible(true);
+                break;
+            case PREVIOUS_SCREEN_STATE:
+                splashScreenPane.setVisible(false);
+                aboutScreenPane.setVisible(false);
+                gameSetupPane.setVisible(false);
+                gameplayScreenPane.setVisible(false);
+                previousScreenPane.setVisible(true);
         }
 
+    }
+
+    /**
+     * @return a ScrollPane which scrolls the layout.
+     */
+    private ScrollPane createScrollPane(Pane layout) {
+        ScrollPane scroll = new ScrollPane();
+        scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scroll.setPannable(true);
+        scroll.setPrefSize(1200, 720);
+        scroll.setContent(layout);
+        return scroll;
+    }
+
+    public void loadPage(WebEngine engine, PropertyType type) {
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        String filePath = props.getProperty(type);
+        try {
+            String text = FileLoader.loadTextFile(filePath);
+            webEngine.loadContent(text);
+            Reader stringReader = new StringReader(text);
+            HTMLEditorKit htmlKit = new HTMLEditorKit();
+            HTMLDocument doc = (HTMLDocument) htmlKit.createDefaultDocument();
+            htmlKit.read(stringReader, doc, 0);
+        } catch (IOException | BadLocationException ex) {
+            errorHandler.processError(PropertyType.INVALID_DOC_ERROR_TEXT);
+        }
+    }
+
+    public ArrayList<GridPane> getPlayerSelectPanes() {
+        return playerSelectPanes;
+    }
+
+    public static ErrorHandler getErrorHandler() {
+        return errorHandler;
     }
 }
