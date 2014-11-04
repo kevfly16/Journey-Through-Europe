@@ -68,6 +68,8 @@ public class Main extends Application {
         DATA_PATH, IMG_PATH, MUS_PATH,
         /* WINDOW DIMENSIONS */
         WINDOW_WIDTH, WINDOW_HEIGHT,
+        /* CONSTANTS */
+        RADIUS,
         /* HTML FILE NAMES */
         ABOUT_FILE_NAME, HISTORY_FILE_NAME,
         /* DATA FILE NAMES */

@@ -6,6 +6,7 @@
 package Game;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import javafx.geometry.Point2D;
 
@@ -71,13 +72,47 @@ public class Map {
         locations = l;
     }
 
+    public void sort() {
+        Collections.sort(locations);
+    }
+
     public City findCity(Point2D point) {
-        for (City location : locations) {
-            if (location.computeDistance(point) < 20) {
-                return location;
-            }
+        int minIndex = binSearch(point.getX() - 20);
+        int min = (int)point.getX() - 20;
+        int max = (int)point.getX() + 20;
+        
+        if(minIndex == -1) {
+            return null;
+        }
+        
+        while(locations.get(minIndex).getPos().getX() > min && minIndex != 0) {
+            minIndex--;
+        }
+        
+        for(int i = minIndex; locations.get(i).getPos().getX() < max; i++) {
+            City city = locations.get(i);
+            if(city.computeDistance(point) < City.getRadius())
+                return city;
         }
 
         return null;
+    }
+
+    private int binSearch(double val) {
+        int low = 0;
+        int high = locations.size();
+        int mid = -1;
+        while (low < high) {
+            mid = (low + high) / 2;
+            int x = (int) locations.get(mid).getPos().getX();
+            if(x > val - 10 && x < val + 10)
+                break;
+            if (x < val) {
+                low = mid + 1;
+            } else {
+                high = mid;
+            }
+        }
+        return mid;
     }
 }

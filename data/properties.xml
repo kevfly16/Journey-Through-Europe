@@ -18,6 +18,7 @@
         <property name="LETTERS_FONT_SIZE"          value="24"></property>
         <property name="DEFAULT_YES_TEXT"           value="Yes"></property>
         <property name="DEFAULT_NO_TEXT"            value="No"></property>
+        <property name="RADIUS"                     value="20"></property>
         <property name="THEME_AUDIO"                value="Theme.mp3"></property>
     </property_list>
     <property_options_list>

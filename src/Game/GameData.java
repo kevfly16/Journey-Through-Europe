@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import properties_manager.PropertiesManager;
 
 /**
  *
@@ -32,7 +33,10 @@ public class GameData {
     public GameData() {
         map = new Map();
         try {
+            PropertiesManager props = PropertiesManager.getPropertiesManager();
+            City.setRadius(Double.parseDouble(props.getProperty(PropertyType.RADIUS)));
             FileLoader.loadCityPoints(map);
+            map.sort();
         } catch (IOException ex) {
             UI.getErrorHandler().processError(PropertyType.INVALID_DOC_ERROR_TEXT);
         }
