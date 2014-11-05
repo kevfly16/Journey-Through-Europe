@@ -32,28 +32,43 @@ public class Map {
         cities = c;
     }
 
-    public City breadthFirst(String city) {
-        // TODO
-        return null;
-    }
-
-    public City breadthFirst(City city) {
-        // TODO
-        return null;
-    }
-
-    public City depthFirst(String city) {
-        // TODO
-        return null;
-    }
-
-    public City depthFirst(City city) {
-        // TODO
-        return null;
-    }
-
     public ArrayList<City> getPath(City src, City dest) {
-        return null;
+        for (City city : locations) {
+            city.setMinDistance(Integer.MAX_VALUE);
+            city.setPreviousCity(null);
+        }
+        
+        City city = src;
+        City next = null;
+        ArrayList<City> citySet = new ArrayList();
+        citySet.add(src);
+        city.setMinDistance(0);
+        while (citySet.size() < locations.size()) {
+            int min = Integer.MAX_VALUE;
+            ArrayList<City> nodes = city.getCities();
+            for (City node : nodes) {
+                int distance = src.getMinDistance() + city.getWeight(node);
+                if (distance < node.getMinDistance()) {
+                    node.setMinDistance(distance);
+                    node.setPreviousCity(city);
+                }
+                if (node.getMinDistance() < min) {
+                    min = node.getMinDistance();
+                    next = node;
+                }
+            }
+            
+            citySet.add(city = next);
+        }
+        
+        ArrayList<City> path = new ArrayList();
+        city = dest;
+        while(city != src) {
+            path.add(0, city);
+            city = city.getPreviousCity();
+        }
+        
+        return path;
     }
 
     public void addCity(City city) {
@@ -78,21 +93,22 @@ public class Map {
 
     public City findCity(Point2D point) {
         int minIndex = binSearch(point.getX() - 20);
-        int min = (int)point.getX() - 20;
-        int max = (int)point.getX() + 20;
-        
-        if(minIndex == -1) {
+        int min = (int) point.getX() - 20;
+        int max = (int) point.getX() + 20;
+
+        if (minIndex == -1) {
             return null;
         }
-        
-        while(locations.get(minIndex).getPos().getX() > min && minIndex != 0) {
+
+        while (locations.get(minIndex).getPos().getX() > min && minIndex != 0) {
             minIndex--;
         }
-        
-        for(int i = minIndex; locations.get(i).getPos().getX() < max; i++) {
+
+        for (int i = minIndex; locations.get(i).getPos().getX() < max; i++) {
             City city = locations.get(i);
-            if(city.computeDistance(point) < City.getRadius())
+            if (city.computeDistance(point) < City.getRadius()) {
                 return city;
+            }
         }
 
         return null;
@@ -105,8 +121,9 @@ public class Map {
         while (low < high) {
             mid = (low + high) / 2;
             int x = (int) locations.get(mid).getPos().getX();
-            if(x > val - 10 && x < val + 10)
+            if (x > val - 10 && x < val + 10) {
                 break;
+            }
             if (x < val) {
                 low = mid + 1;
             } else {

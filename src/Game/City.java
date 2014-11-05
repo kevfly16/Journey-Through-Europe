@@ -22,6 +22,8 @@ public class City implements Comparable {
     private static double radius;
     private boolean ferry;
     private boolean plane;
+    private int minDistance;
+    private City previousCity;
 
     public City(String n) {
         name = n;
@@ -97,6 +99,22 @@ public class City implements Comparable {
 
     public double computeDistance(Point2D point) {
         return point.distance(pos);
+    }
+    
+    public void setMinDistance(int min) {
+        minDistance = min;
+    }
+    
+    public int getMinDistance() {
+        return minDistance;
+    }
+    
+    public void setPreviousCity(City city) {
+        previousCity = city;
+    }
+    
+    public City getPreviousCity() {
+        return previousCity;
     }
 
     @Override
