@@ -12,6 +12,7 @@ import UI.UI;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import properties_manager.PropertiesManager;
@@ -44,5 +45,18 @@ public class GameData {
 
     public static Map getMap() {
         return map;
+    }
+    
+    public static int getCardsDealt() {
+        return numCardsDealt;
+    }
+    
+    public static void setCardsDealt(int num) {
+        numCardsDealt = num;
+    }
+    
+    public static ArrayList<Card> generateCards() {
+        
+        return new ArrayList();
     }
 }

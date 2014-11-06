@@ -10,11 +10,14 @@ import Game.City;
 import Game.GameData;
 import Game.GameStateManager;
 import Main.Main.PropertyType;
-import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import javafx.animation.ParallelTransition;
+import javafx.animation.ScaleTransition;
+import javafx.animation.TranslateTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -36,7 +39,6 @@ import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -44,10 +46,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
@@ -63,7 +65,7 @@ public class UI {
     private CardAnimation cardAnim;
     private MoveAnimation moveAnim;
     private DocumentManager docManager;
-    private EventHandler eventHandler;
+    private JTEEventHandler eventHandler;
     private static ErrorHandler errorHandler;
     private Stage primaryStage;
     private BorderPane mainPane;
@@ -97,11 +99,16 @@ public class UI {
     private Pane previousScreenPane;
     private boolean dragging;
     private Label cityName;
+    private ParallelTransition parallelTransition;
+    private boolean animRunning;
+    private Pane cardsPane;
+    private int cardWidth;
+    private int cardHeight;
 
     /**
-     * The SokobanUIState represents the four screen states that are possible
-     * for the Sokoban game application. Depending on which state is in current
-     * use, different controls will be visible.
+     * The UIState represents the four screen states that are possible for the
+     * Journey Through Europe game application. Depending on which state is in
+     * current use, different controls will be visible.
      */
     public enum UIState {
 
@@ -112,10 +119,10 @@ public class UI {
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         imgPath = "file:" + props.getProperty(PropertyType.IMG_PATH);
         gsm = new GameStateManager(this);
-        cardAnim = new CardAnimation();
+        cardAnim = new CardAnimation(this);
         moveAnim = new MoveAnimation();
         docManager = new DocumentManager();
-        eventHandler = new EventHandler(this);
+        eventHandler = new JTEEventHandler(this);
         errorHandler = new ErrorHandler(primaryStage);
         initMainPane();
         initSplashScreenPane();
@@ -125,7 +132,7 @@ public class UI {
         initMoveHistoryScreenPane();
         initWorkspace();
         dragging = false;
-
+        animRunning = false;
     }
 
     private void initMainPane() {
@@ -154,7 +161,8 @@ public class UI {
 
         Image splashScreenImage = loadImage(splashScreenImagePath);
         ImageView splashScreenImageView = new ImageView(splashScreenImage);
-
+        splashScreenImageView.setFitWidth(paneWidth);
+        splashScreenImageView.setFitHeight(paneHeight);
         Label splashScreenImageLabel = new Label();
         splashScreenImageLabel.setGraphic(splashScreenImageView);
 
@@ -223,7 +231,6 @@ public class UI {
         children.add(goButton);
         top.setPadding(new Insets(0, 0, 10, 0));
         gameSetupPane.add(top, 0, 0);
-
     }
 
     public void initPanes(int panes) {
@@ -240,7 +247,7 @@ public class UI {
         for (int i = 1; i <= panes; i++) {
             GridPane playerSelectPane = new GridPane();
             BorderStroke stroke = new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, null);
-            playerSelectPane.setPadding(new Insets(125, 50, 125, 50));
+            playerSelectPane.setPadding(new Insets(paneHeight * 0.15 + 15, paneWidth * 0.055, paneHeight * 0.15 + 15, paneWidth * 0.055));
             playerSelectPane.setBorder(new Border(stroke));
             Label flag = new Label();
             flag.setGraphic(new ImageView(loadImage(flags.get(i - 1))));
@@ -277,6 +284,8 @@ public class UI {
     private void initGameplayScreenPane() {
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         gameplayScreenPane = new BorderPane();
+        cardWidth = Integer.parseInt(props.getProperty(PropertyType.CARD_WIDTH));
+        cardHeight = Integer.parseInt(props.getProperty(PropertyType.CARD_HEIGHT));
         mapPane = new StackPane();
         mapImage = new ImageView(loadImage(props.getProperty(PropertyType.MAP_IMG)));
         mapPane.getChildren().setAll(mapImage);
@@ -312,9 +321,11 @@ public class UI {
 
         cityName = new Label();
         HBox top = new HBox(2);
+        cardsPane = new Pane();
         top.getChildren().addAll(about, moveHistoryButton, cityName);
-        gameplayScreenPane.setCenter(gamePane);
         gameplayScreenPane.setTop(top);
+        gameplayScreenPane.setCenter(gamePane);
+        gameplayScreenPane.setLeft(cardsPane);
     }
 
     private void initAboutScreenPane() {
@@ -353,7 +364,7 @@ public class UI {
         moveScroll.setLayoutY(paneHeight * 0.25);
         Button back = initButton(props.getProperty(PropertyType.BACK_BUTTON));
         back.setOnAction((ActionEvent e) -> {
-            changeWorkspace(UIState.GAMEPLAY_SCREEN_STATE);
+            changeWorkspace(UIState.PREVIOUS_SCREEN_STATE);
         });
         back.setAlignment(Pos.TOP_LEFT);
         moveHistoryScreenPane.getChildren().addAll(logo, moveScroll, back);
@@ -442,6 +453,7 @@ public class UI {
                 aboutScreenPane.setVisible(false);
                 gameSetupPane.setVisible(false);
                 gameplayScreenPane.setVisible(false);
+                moveHistoryScreenPane.setVisible(false);
                 previousScreenPane.setVisible(true);
                 break;
             case HISTORY_SCREEN_STATE:
@@ -449,7 +461,6 @@ public class UI {
                 moveHistoryScreenPane.setVisible(true);
                 break;
         }
-
     }
 
     /**
@@ -460,7 +471,7 @@ public class UI {
         scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scroll.setPannable(true);
-        scroll.setPrefSize(1200, 720);
+        scroll.setPrefSize(paneWidth - cardWidth, paneHeight);
         scroll.setContent(layout);
         return scroll;
     }
@@ -480,11 +491,57 @@ public class UI {
         }
     }
 
+    public void cardAnimate(LinkedList<String> paths, int size) {
+        if (paths.size() < 1) {
+            animRunning = false;
+            return;
+        }
+        animRunning = true;
+        ImageView card = new ImageView(loadImage(paths.get(0)));
+        card.setFitWidth(cardWidth);
+        card.setFitHeight(cardHeight);
+        card.setOnMouseClicked(e -> {
+            if (!animRunning) {
+
+            }
+        });
+        cardsPane.getChildren().add(card);
+        TranslateTransition translateTransition
+                = new TranslateTransition(Duration.millis(3000), card);
+        translateTransition.setFromX(paneWidth);
+        translateTransition.setToX(0);
+        translateTransition.setFromY(paneHeight * 0.3);
+        translateTransition.setToY(65 * (size - paths.size()));
+        translateTransition.setCycleCount(1);
+        ScaleTransition scaleTransition
+                = new ScaleTransition(Duration.millis(1500), card);
+        scaleTransition.setToX(2f);
+        scaleTransition.setToY(2f);
+        scaleTransition.setCycleCount(2);
+        scaleTransition.setAutoReverse(true);
+        parallelTransition = new ParallelTransition();
+        parallelTransition.getChildren().addAll(
+                translateTransition,
+                scaleTransition
+        );
+
+        parallelTransition.setOnFinished((ActionEvent event) -> {
+            paths.remove(0);
+            cardAnimate(paths, size);
+        });
+
+        parallelTransition.play();
+    }
+
     public ArrayList<GridPane> getPlayerSelectPanes() {
         return playerSelectPanes;
     }
 
     public static ErrorHandler getErrorHandler() {
         return errorHandler;
+    }
+
+    public CardAnimation getCardAnimation() {
+        return cardAnim;
     }
 }

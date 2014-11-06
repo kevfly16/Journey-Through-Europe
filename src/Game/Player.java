@@ -5,10 +5,27 @@
  */
 package Game;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Kevin
  */
 public class Player {
+    
+    private String name;
+    private ArrayList<Card> cards;
+    
+    public Player(String n) {
+        name = n;
+    }
+    
+    public void setCards(ArrayList<Card> c) {
+        cards = c;
+    }
+    
+    public ArrayList<Card> getCards() {
+        return cards;
+    }
     
 }

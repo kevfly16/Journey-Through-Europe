@@ -5,7 +5,9 @@
  */
 package Game;
 
+import Main.Main.PropertyType;
 import UI.UI;
+import properties_manager.PropertiesManager;
 
 /**
  *
@@ -16,8 +18,11 @@ public class GameStateManager {
     private GameData gameData;
     
     public GameStateManager(UI initUI) {
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        int num = Integer.parseInt(props.getProperty(PropertyType.NUM_CARDS));
         ui = initUI;
         gameData = new GameData();
+        GameData.setCardsDealt(num);
     }
     
     

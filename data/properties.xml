@@ -6,8 +6,11 @@
 <properties>
     <property_list>    
         <property name="SPLASH_SCREEN_TITLE_TEXT"   value="Journey Through Europe"></property>
-        <property name="WINDOW_WIDTH"               value="1200"></property>
-        <property name="WINDOW_HEIGHT"              value="720"></property>
+        <property name="WINDOW_WIDTH"               value="1500"></property>
+        <property name="WINDOW_HEIGHT"              value="900"></property>
+        <property name="CARD_WIDTH"                 value="225"></property>
+        <property name="CARD_HEIGHT"                value="320"></property>
+        <property name="NUM_CARDS"                  value="9"></property>
         <property name="SPLASH_SCREEN_IMAGE_NAME"   value="Game.png"></property>
         <property name="CITIES_FILE"                value="cities.csv"></property>
         <property name="MAP_IMG"                    value="gameplay.jpg"></property>

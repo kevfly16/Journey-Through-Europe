@@ -5,17 +5,25 @@
  */
 package UI;
 
-import java.util.TimerTask;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Platform;
 
 /**
  *
  * @author Kevin
  */
-public class CardAnimation extends TimerTask {
+public class CardAnimation extends Thread {
+
+    private final UI ui;
+
+    public CardAnimation(UI initUI) {
+        ui = initUI;
+    }
 
     @Override
     public void run() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+ 
     }
-    
 }
