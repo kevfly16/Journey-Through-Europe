@@ -23,6 +23,8 @@
         <property name="DEFAULT_NO_TEXT"            value="No"></property>
         <property name="RADIUS"                     value="20"></property>
         <property name="THEME_AUDIO"                value="Theme.mp3"></property>
+        <property name="MAP_WIDTH"                  value="1952"></property>
+        <property name="MAP_HEIGHT"                 value="2572"></property>
     </property_list>
     <property_options_list>
         <property_options name="LANGUAGE_FILE">

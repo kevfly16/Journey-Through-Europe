@@ -6,15 +6,11 @@
 package Game;
 
 import File.FileLoader;
-import Main.Main;
 import Main.Main.PropertyType;
 import UI.UI;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import properties_manager.PropertiesManager;
 
 /**
@@ -32,15 +28,28 @@ public class GameData {
     private int currentMove;
 
     public GameData() {
-        map = new Map();
-        try {
-            PropertiesManager props = PropertiesManager.getPropertiesManager();
-            City.setRadius(Double.parseDouble(props.getProperty(PropertyType.RADIUS)));
-            FileLoader.loadCityPoints(map);
-            map.sort();
-        } catch (IOException ex) {
-            UI.getErrorHandler().processError(PropertyType.INVALID_DOC_ERROR_TEXT);
-        }
+        initMap();
+        initCards();
+    }
+    
+    public ArrayList<Move> getMoves() {
+        return moves;
+    }
+    
+    public void addMove(Move move) {
+        moves.add(move);
+    }
+    
+    public void setPlayers(ArrayList<Player> p) {
+        players = p;
+    }
+    
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
+    
+    public static Card getCard(String card) {
+        return cards.get(card);
     }
 
     public static Map getMap() {
@@ -56,7 +65,45 @@ public class GameData {
     }
     
     public static ArrayList<Card> generateCards() {
-        
         return new ArrayList();
+    }
+    
+    public Move getLastMove(Player player) {
+        //TODO
+        return new Move(player, null);
+    }
+    
+    public int getCurrentMove() {
+        return currentMove;
+    }
+    
+    public void incCurrentMove() {
+        currentMove++;
+        currentMove %= players.size();
+    }
+    
+    public Player getCurrentPlayer() {
+        return players.get(currentMove);
+    }
+    
+    public void deleteLastMove(Player player) {
+        //TODO
+    }
+    
+    private void initMap() {
+        map = new Map();
+        try {
+            PropertiesManager props = PropertiesManager.getPropertiesManager();
+            City.setRadius(Double.parseDouble(props.getProperty(PropertyType.RADIUS)));
+            FileLoader.loadCityPoints(map);
+            map.sort();
+        } catch (IOException ex) {
+            UI.getErrorHandler().processError(PropertyType.INVALID_DOC_ERROR_TEXT);
+        }
+    }
+    
+    private void initCards() {
+        //TODO
+        cards = new HashMap();
     }
 }

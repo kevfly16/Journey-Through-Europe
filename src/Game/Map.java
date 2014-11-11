@@ -74,6 +74,10 @@ public class Map {
     public void addCity(City city) {
         cities.put(city.getName(), city);
     }
+    
+    public City getCity(String city) {
+        return cities.get(city);
+    }
 
     public void addLocation(City city) {
         locations.add(city);

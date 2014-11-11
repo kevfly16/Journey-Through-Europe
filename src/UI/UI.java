@@ -15,8 +15,11 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import javafx.animation.Animation;
+import javafx.animation.Interpolator;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
+import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -104,6 +107,7 @@ public class UI {
     private Pane cardsPane;
     private int cardWidth;
     private int cardHeight;
+    private Point2D currentPos;
 
     /**
      * The UIState represents the four screen states that are possible for the
@@ -119,7 +123,6 @@ public class UI {
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         imgPath = "file:" + props.getProperty(PropertyType.IMG_PATH);
         gsm = new GameStateManager(this);
-        cardAnim = new CardAnimation(this);
         moveAnim = new MoveAnimation();
         docManager = new DocumentManager();
         eventHandler = new JTEEventHandler(this);
@@ -133,6 +136,7 @@ public class UI {
         initWorkspace();
         dragging = false;
         animRunning = false;
+        currentPos = new Point2D(0, 0);
     }
 
     private void initMainPane() {
@@ -294,11 +298,11 @@ public class UI {
         // center the scroll contents.
         gamePane.setHvalue(gamePane.getHmin() + (gamePane.getHmax() - gamePane.getHmin()) / 2);
         gamePane.setVvalue(gamePane.getVmin() + (gamePane.getVmax() - gamePane.getVmin()) / 2);
-
         mapImage.setOnMouseDragged((MouseEvent e) -> {
             dragging = true;
         });
         mapImage.setOnMouseClicked((MouseEvent e) -> {
+            currentPos = new Point2D(e.getX(), e.getY());
             if (!dragging) {
                 Point2D point = new Point2D(e.getX(), e.getY());
                 City city = GameData.getMap().findCity(point);
@@ -543,5 +547,9 @@ public class UI {
 
     public CardAnimation getCardAnimation() {
         return cardAnim;
+    }
+    
+    public ScrollPane getGamePane() {
+        return gamePane;
     }
 }

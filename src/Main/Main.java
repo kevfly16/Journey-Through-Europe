@@ -69,7 +69,7 @@ public class Main extends Application {
         /* WINDOW DIMENSIONS */
         WINDOW_WIDTH, WINDOW_HEIGHT, CARD_WIDTH, CARD_HEIGHT,
         /* CONSTANTS */
-        RADIUS, NUM_CARDS,
+        RADIUS, NUM_CARDS, MAP_WIDTH, MAP_HEIGHT,
         /* HTML FILE NAMES */
         ABOUT_FILE_NAME, HISTORY_FILE_NAME,
         /* DATA FILE NAMES */
