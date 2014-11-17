@@ -12,18 +12,22 @@ package Game;
 public class Card {
     private String city;
     private String cardDescription;
+    private String color;
     private boolean skipTurn;
     private int pointsLost;
     private City destCity;
     private boolean rule;
+    private String path;
     
-    public Card(String c, String desc, boolean s, int points, City dest, boolean r) {
+    public Card(String c, String desc, String col, boolean s, int points, City dest, boolean r, String p) {
         city = c;
         cardDescription = desc;
+        color = col;
         skipTurn = s;
         pointsLost = points;
         destCity = dest;
         rule = r;
+        path = p;
     }
     
     public String getCity() {
@@ -32,6 +36,14 @@ public class Card {
     
     public String getCardDescription() {
         return cardDescription;
+    }
+    
+    public String getColor() {
+        return color;
+    }
+    
+    public String getPath() {
+        return path;
     }
     
     public boolean hasSkipTurn() {

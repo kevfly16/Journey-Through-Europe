@@ -11,6 +11,9 @@ import UI.UI;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import properties_manager.PropertiesManager;
 
 /**
@@ -24,7 +27,7 @@ public class GameData {
     private static ArrayList<Player> players;
     private static HashMap<String, Card> cards;
     private static int numCardsDealt;
-    private HashMap<String, Card> usedCards;
+    private static HashMap<String, Card> usedCards;
     private int currentMove;
 
     public GameData() {
@@ -40,11 +43,11 @@ public class GameData {
         moves.add(move);
     }
     
-    public void setPlayers(ArrayList<Player> p) {
+    public static void setPlayers(ArrayList<Player> p) {
         players = p;
     }
     
-    public ArrayList<Player> getPlayers() {
+    public static ArrayList<Player> getPlayers() {
         return players;
     }
     
@@ -64,8 +67,22 @@ public class GameData {
         numCardsDealt = num;
     }
     
-    public static ArrayList<Card> generateCards() {
-        return new ArrayList();
+    public static LinkedList<Card> generateCards() {
+        String[] c = new String[cards.size()];
+        cards.keySet().toArray(c);
+        LinkedList<Card> hand = new LinkedList();
+        String[] colors = new String[]{"green","red","yellow"};
+        for(int i = 0; i < numCardsDealt; i++) {
+            int rand = (int) (Math.random() * c.length);
+            Card card = cards.get(c[rand]);
+            while(!card.getColor().equals(colors[i%colors.length]) || usedCards.get(card.getCity()) != null) {
+                rand = (int) (Math.random() * c.length);
+                card = cards.get(c[rand]);
+            }
+            hand.addLast(card);
+            usedCards.put(card.getCity(), card);
+        }
+        return hand;
     }
     
     public Move getLastMove(Player player) {
@@ -78,8 +95,10 @@ public class GameData {
     }
     
     public void incCurrentMove() {
-        currentMove++;
-        currentMove %= players.size();
+        if(currentMove == players.size() - 1)
+            currentMove = 0;
+        else
+            currentMove++;
     }
     
     public Player getCurrentPlayer() {
@@ -103,7 +122,12 @@ public class GameData {
     }
     
     private void initCards() {
-        //TODO
-        cards = new HashMap();
+        try {
+            cards = new HashMap();
+            usedCards = new HashMap();
+            FileLoader.loadCards(cards);
+        } catch (IOException ex) {
+            Logger.getLogger(GameData.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

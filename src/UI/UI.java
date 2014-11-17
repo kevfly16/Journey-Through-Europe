@@ -6,10 +6,13 @@
 package UI;
 
 import File.FileLoader;
+import Game.Card;
 import Game.City;
 import Game.GameData;
 import Game.GameStateManager;
+import Game.Player;
 import Main.Main.PropertyType;
+import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -94,7 +97,6 @@ public class UI {
     private Button aboutButton;
     private Button rollButton;
     private Button flightButton;
-    private ArrayList<Image> playerIcons;
     private String imgPath;
     private Insets marginlessInsets;
     private WebView browser;
@@ -108,6 +110,7 @@ public class UI {
     private int cardWidth;
     private int cardHeight;
     private Point2D currentPos;
+    private ArrayList<String> flagPaths;
 
     /**
      * The UIState represents the four screen states that are possible for the
@@ -244,6 +247,7 @@ public class UI {
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         // GET FLAGS
         ArrayList<String> flags = props.getPropertyOptionsList(PropertyType.FLAG);
+        flagPaths = flags;
         String player = props.getProperty(PropertyType.PLAYER_TEXT);
         String computer = props.getProperty(PropertyType.COMPUTER_TEXT);
         String nameStr = props.getProperty(PropertyType.NAME_TEXT);
@@ -290,7 +294,7 @@ public class UI {
         gameplayScreenPane = new BorderPane();
         cardWidth = Integer.parseInt(props.getProperty(PropertyType.CARD_WIDTH));
         cardHeight = Integer.parseInt(props.getProperty(PropertyType.CARD_HEIGHT));
-        mapPane = new StackPane();
+        mapPane = new Pane();
         mapImage = new ImageView(loadImage(props.getProperty(PropertyType.MAP_IMG)));
         mapPane.getChildren().setAll(mapImage);
         // wrap the scene contents in a pannable scroll pane.
@@ -307,7 +311,7 @@ public class UI {
                 Point2D point = new Point2D(e.getX(), e.getY());
                 City city = GameData.getMap().findCity(point);
                 if (city != null) {
-                    cityName.setText(city.getName());
+                    eventHandler.movePlayer(city);
                 }
             }
             dragging = false;
@@ -495,13 +499,13 @@ public class UI {
         }
     }
 
-    public void cardAnimate(LinkedList<String> paths, int size) {
-        if (paths.size() < 1) {
+    public void cardAnimate(LinkedList<Card> cards, int size) {
+        if (cards.size() < 1) {
             animRunning = false;
             return;
         }
         animRunning = true;
-        ImageView card = new ImageView(loadImage(paths.get(0)));
+        ImageView card = new ImageView(loadImage(cards.getFirst().getPath()));
         card.setFitWidth(cardWidth);
         card.setFitHeight(cardHeight);
         card.setOnMouseClicked(e -> {
@@ -515,7 +519,7 @@ public class UI {
         translateTransition.setFromX(paneWidth);
         translateTransition.setToX(0);
         translateTransition.setFromY(paneHeight * 0.3);
-        translateTransition.setToY(65 * (size - paths.size()));
+        translateTransition.setToY(65 * (size - cards.size()));
         translateTransition.setCycleCount(1);
         ScaleTransition scaleTransition
                 = new ScaleTransition(Duration.millis(1500), card);
@@ -530,11 +534,50 @@ public class UI {
         );
 
         parallelTransition.setOnFinished((ActionEvent event) -> {
-            paths.remove(0);
-            cardAnimate(paths, size);
+            cards.removeFirst();
+            cardAnimate(cards, size);
         });
 
         parallelTransition.play();
+    }
+
+    public void initPlayerIcons() {
+        ArrayList<Player> players = GameData.getPlayers();
+        int index = 0;
+        for (Player player : players) {
+            ImageView playerIcon = new ImageView(loadImage(player.getIconURL()));
+            playerIcon.setLayoutX(player.getStartingCity().getPos().getX() - 50);
+            playerIcon.setLayoutY(player.getStartingCity().getPos().getY() - 100);
+            mapPane.getChildren().add(playerIcon);
+            player.setPlayerIcon(playerIcon);
+            index++;
+        }
+    }
+
+    public void movePlayer(Player player, double x, double y, City city) {
+        if(animRunning)
+            return;
+        animRunning = true;
+        ImageView playerIcon = player.getPlayerIcon();
+        double time = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2))*5;
+        TranslateTransition translateTransition
+                = new TranslateTransition(Duration.millis(time), playerIcon);
+        translateTransition.setFromX(0);
+        translateTransition.setToX(x);
+        translateTransition.setFromY(0);
+        translateTransition.setToY (y);
+        translateTransition.setCycleCount(1);
+        translateTransition.setInterpolator(Interpolator.LINEAR);
+        translateTransition.setOnFinished((ActionEvent event) -> {
+            animRunning = false;
+            player.setCurrentPosition(city);
+            playerIcon.setTranslateX(0);
+            playerIcon.setTranslateY(0);
+            playerIcon.setLayoutX(playerIcon.getLayoutX() + x);
+            playerIcon.setLayoutY(playerIcon.getLayoutY() + y);
+            gsm.getGameData().incCurrentMove();
+        });
+        translateTransition.play();
     }
 
     public ArrayList<GridPane> getPlayerSelectPanes() {
@@ -548,8 +591,20 @@ public class UI {
     public CardAnimation getCardAnimation() {
         return cardAnim;
     }
-    
+
     public ScrollPane getGamePane() {
         return gamePane;
+    }
+
+    public ArrayList<String> getFlagPaths() {
+        return flagPaths;
+    }
+
+    public Pane getMapPane() {
+        return mapPane;
+    }
+
+    public GameStateManager getGSM() {
+        return gsm;
     }
 }

@@ -10,9 +10,10 @@
         <property name="WINDOW_HEIGHT"              value="900"></property>
         <property name="CARD_WIDTH"                 value="225"></property>
         <property name="CARD_HEIGHT"                value="320"></property>
-        <property name="NUM_CARDS"                  value="9"></property>
+        <property name="NUM_CARDS"                  value="3"></property>
         <property name="SPLASH_SCREEN_IMAGE_NAME"   value="Game.png"></property>
         <property name="CITIES_FILE"                value="cities.csv"></property>
+        <property name="CARDS_FILE"                 value="cards.csv"></property>
         <property name="MAP_IMG"                    value="gameplay.jpg"></property>
         <property name="DATA_PATH"                  value="./data/"></property>
         <property name="IMG_PATH"                   value="./images/"></property>

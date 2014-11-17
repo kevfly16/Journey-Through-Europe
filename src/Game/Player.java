@@ -6,6 +6,7 @@
 package Game;
 
 import java.util.ArrayList;
+import javafx.scene.image.ImageView;
 
 /**
  *
@@ -14,7 +15,9 @@ import java.util.ArrayList;
 public class Player {
     
     private final String name;
-    private final String flag;
+    private final String flagURL;
+    private final String iconURL;
+    private ImageView playerIcon;
     private boolean skippedTurn;
     private City currentPosition;
     private int currentPoints;
@@ -24,21 +27,26 @@ public class Player {
     
     public Player(String n, String f) {
         name = n;
-        flag = f;
+        flagURL = f;
         skippedTurn = false;
         currentPosition = null;
         currentPoints = 0;
         cards = new ArrayList();
         visited = new ArrayList();
         roll = 0;
+        iconURL = initIconURL();
     }
     
     public String getName() {
         return name;
     }
     
-    public String getFlag() {
-        return flag;
+    public String getFlagURL() {
+        return flagURL;
+    }
+    
+    public String getIconURL() {
+        return iconURL;
     }
     
     public void setSkippedTurn(boolean skip) {
@@ -96,11 +104,28 @@ public class Player {
         return roll;
     }
     
+    public City getStartingCity() {
+        return GameData.getMap().getCity(cards.get(0).getCity().toUpperCase());
+    }
+    
     public ArrayList<City> getVisited() {
         return visited;
     }
     
     public void addVisited(City city) {
         visited.add(city);
+    }
+    
+    public void setPlayerIcon(ImageView p) {
+        playerIcon = p;
+    }
+    
+    public ImageView getPlayerIcon() {
+        return playerIcon;
+    }
+    
+    private String initIconURL() {
+        String color = flagURL.split("_")[0];
+        return "piece_" + color + ".png";
     }
 }

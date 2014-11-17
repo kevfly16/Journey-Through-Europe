@@ -5,12 +5,14 @@
  */
 package File;
 
+import Game.Card;
 import Game.City;
 import Game.Map;
 import Main.Main.PropertyType;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 import properties_manager.PropertiesManager;
 
 /**
@@ -72,6 +74,27 @@ public class FileLoader {
             c.setPos(Double.parseDouble(city[3]), Double.parseDouble(city[4]));
             map.addCity(c);
             map.addLocation(c);
+        }
+    }
+    
+    /**
+     *
+     * @param cards
+     * @throws IOException
+     */
+    public static void loadCards(HashMap<String, Card> cards) throws IOException {
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        String dataPath = props.getProperty(PropertyType.DATA_PATH);
+        String citiesFile = props.getProperty(PropertyType.CARDS_FILE);
+        String path = dataPath + citiesFile;
+        BufferedReader br = new BufferedReader(new FileReader(path));
+        String line;
+        String seperator = ",";
+        while ((line = br.readLine()) != null) {
+           // use space as separator
+           String[] city = line.split(seperator);
+           Card card = new Card(city[0],"",city[1],false,0,null,false,city[2]);
+           cards.put(city[0], card);
         }
     }
 }
