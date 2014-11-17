@@ -58,8 +58,13 @@ public class FileLoader {
         // RETURN THE TEXT
         return textToReturn;
     }
+    
+    public static void loadMap(Map map) throws IOException {
+        loadCityPoints(map);
+        loadConnections(map);
+    }
 
-    public static void loadCityPoints(Map map) throws IOException {
+    private static void loadCityPoints(Map map) throws IOException {
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         String dataPath = props.getProperty(PropertyType.DATA_PATH);
         String citiesFile = props.getProperty(PropertyType.CITIES_FILE);
@@ -75,6 +80,10 @@ public class FileLoader {
             map.addCity(c);
             map.addLocation(c);
         }
+    }
+    
+    private static void loadConnections(Map map) {
+        
     }
     
     /**

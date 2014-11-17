@@ -31,6 +31,7 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -67,11 +68,11 @@ import properties_manager.PropertiesManager;
  */
 public class UI {
 
-    private GameStateManager gsm;
+    private final GameStateManager gsm;
     private CardAnimation cardAnim;
-    private MoveAnimation moveAnim;
-    private DocumentManager docManager;
-    private JTEEventHandler eventHandler;
+    private final MoveAnimation moveAnim;
+    private final DocumentManager docManager;
+    private final JTEEventHandler eventHandler;
     private static ErrorHandler errorHandler;
     private Stage primaryStage;
     private BorderPane mainPane;
@@ -97,7 +98,7 @@ public class UI {
     private Button aboutButton;
     private Button rollButton;
     private Button flightButton;
-    private String imgPath;
+    private final String imgPath;
     private Insets marginlessInsets;
     private WebView browser;
     private WebEngine webEngine;
@@ -111,6 +112,9 @@ public class UI {
     private int cardHeight;
     private Point2D currentPos;
     private ArrayList<String> flagPaths;
+    private final int cardYFactor = 65;
+    private final int cardYConstant = 25;
+    private final int velocity = 4;
 
     /**
      * The UIState represents the four screen states that are possible for the
@@ -330,6 +334,10 @@ public class UI {
         cityName = new Label();
         HBox top = new HBox(2);
         cardsPane = new Pane();
+        Label label = new Label();
+        label.setLayoutX(0);
+        label.setLayoutY(0);
+        cardsPane.getChildren().add(label);
         top.getChildren().addAll(about, moveHistoryButton, cityName);
         gameplayScreenPane.setTop(top);
         gameplayScreenPane.setCenter(gamePane);
@@ -498,14 +506,37 @@ public class UI {
             errorHandler.processError(PropertyType.INVALID_DOC_ERROR_TEXT);
         }
     }
+    
+    public void dealAnimate(LinkedList<Player> players) {
+        ObservableList<Node> children = cardsPane.getChildren();
+        if(players.size() == 0) {
+            Player player = gsm.getGameData().getCurrentPlayer();
+            children.remove(1, children.size());
+            Label label = (Label)children.get(0);
+            label.setText(player.getName());
+            ArrayList<Card> cards = player.getCards();
+            for(Card card : cards)
+                cardsPane.getChildren().add(card.getCardIcon());
+            return;
+        }
+        LinkedList cards = new LinkedList(players.getFirst().getCards());
+        if(children.size() > 1)
+            children.remove(1, children.size());
+        Label label = (Label)children.get(0);
+        label.setText(players.getFirst().getName());
+        players.removeFirst();
+        cardsAnimate(players, cards, cards.size());
+    }
 
-    public void cardAnimate(LinkedList<Card> cards, int size) {
+    public void cardsAnimate(LinkedList<Player> players, LinkedList<Card> cards, int size) {
         if (cards.size() < 1) {
             animRunning = false;
+            dealAnimate(players);
             return;
         }
         animRunning = true;
         ImageView card = new ImageView(loadImage(cards.getFirst().getPath()));
+        cards.getFirst().setCardIcon(card);
         card.setFitWidth(cardWidth);
         card.setFitHeight(cardHeight);
         card.setOnMouseClicked(e -> {
@@ -519,7 +550,7 @@ public class UI {
         translateTransition.setFromX(paneWidth);
         translateTransition.setToX(0);
         translateTransition.setFromY(paneHeight * 0.3);
-        translateTransition.setToY(65 * (size - cards.size()));
+        translateTransition.setToY(cardYFactor * (size - cards.size()) + cardYConstant);
         translateTransition.setCycleCount(1);
         ScaleTransition scaleTransition
                 = new ScaleTransition(Duration.millis(1500), card);
@@ -535,7 +566,7 @@ public class UI {
 
         parallelTransition.setOnFinished((ActionEvent event) -> {
             cards.removeFirst();
-            cardAnimate(cards, size);
+            cardsAnimate(players, cards, size);
         });
 
         parallelTransition.play();
@@ -559,7 +590,7 @@ public class UI {
             return;
         animRunning = true;
         ImageView playerIcon = player.getPlayerIcon();
-        double time = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2))*5;
+        double time = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2))*velocity;
         TranslateTransition translateTransition
                 = new TranslateTransition(Duration.millis(time), playerIcon);
         translateTransition.setFromX(0);
@@ -606,5 +637,9 @@ public class UI {
 
     public GameStateManager getGSM() {
         return gsm;
+    }
+    
+    public boolean isAnimRunning() {
+        return animRunning;
     }
 }

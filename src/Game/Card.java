@@ -5,19 +5,22 @@
  */
 package Game;
 
+import javafx.scene.image.ImageView;
+
 /**
  *
  * @author Kevin
  */
 public class Card {
-    private String city;
-    private String cardDescription;
-    private String color;
-    private boolean skipTurn;
-    private int pointsLost;
-    private City destCity;
-    private boolean rule;
-    private String path;
+    private final String city;
+    private final String cardDescription;
+    private final String color;
+    private final boolean skipTurn;
+    private final int pointsLost;
+    private final City destCity;
+    private final boolean rule;
+    private final String path;
+    private ImageView cardIcon;
     
     public Card(String c, String desc, String col, boolean s, int points, City dest, boolean r, String p) {
         city = c;
@@ -60,5 +63,13 @@ public class Card {
     
     public boolean hasRule() {
         return rule;
+    }
+    
+    public void setCardIcon(ImageView card) {
+        cardIcon = card;
+    }
+    
+    public ImageView getCardIcon() {
+        return cardIcon;
     }
 }

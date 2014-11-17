@@ -54,8 +54,7 @@ public class JTEEventHandler {
         }
         ui.changeWorkspace(UIState.GAMEPLAY_SCREEN_STATE);
         GameData.setPlayers(players);
-        LinkedList cards = new LinkedList(players.get(0).getCards());
-        ui.cardAnimate(cards, cards.size());
+        ui.dealAnimate(new LinkedList<>(players));
         ui.initPlayerIcons();
     }
 
