@@ -24,8 +24,9 @@ public class Player {
     private ArrayList<Card> cards;
     private final ArrayList<City> visited;
     private int roll;
+    private final boolean computer;
     
-    public Player(String n, String f) {
+    public Player(String n, String f, boolean c) {
         name = n;
         flagURL = f;
         skippedTurn = false;
@@ -35,6 +36,7 @@ public class Player {
         visited = new ArrayList();
         roll = 0;
         iconURL = initIconURL();
+        computer = c;
     }
     
     public String getName() {
@@ -96,8 +98,8 @@ public class Player {
        return true;
     }
     
-    public void rollDice() {
-        roll = (int) (Math.random() * 7);
+    public void rollDie() {
+        roll = (int) (Math.random() * 6 + 1);
     }
     
     public int getRoll() {
@@ -122,6 +124,14 @@ public class Player {
     
     public ImageView getPlayerIcon() {
         return playerIcon;
+    }
+    
+    public boolean isComputer() {
+        return computer;
+    }
+    
+    public boolean isPlayer() {
+        return !computer;
     }
     
     private String initIconURL() {

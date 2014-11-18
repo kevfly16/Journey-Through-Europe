@@ -10,6 +10,7 @@ import Game.Card;
 import Game.City;
 import Game.GameData;
 import Game.GameStateManager;
+import Game.GameStateManager.GameState;
 import Game.Player;
 import Main.Main.PropertyType;
 import java.io.File;
@@ -108,13 +109,16 @@ public class UI {
     private ParallelTransition parallelTransition;
     private boolean animRunning;
     private Pane cardsPane;
+    private VBox infoPane;
     private int cardWidth;
+    private int dieWidth;
     private int cardHeight;
     private Point2D currentPos;
     private ArrayList<String> flagPaths;
     private final int cardYFactor = 65;
     private final int cardYConstant = 25;
     private final int velocity = 4;
+    private ImageView die;
 
     /**
      * The UIState represents the four screen states that are possible for the
@@ -298,6 +302,7 @@ public class UI {
         gameplayScreenPane = new BorderPane();
         cardWidth = Integer.parseInt(props.getProperty(PropertyType.CARD_WIDTH));
         cardHeight = Integer.parseInt(props.getProperty(PropertyType.CARD_HEIGHT));
+        dieWidth = Integer.parseInt(props.getProperty(PropertyType.DIE_WIDTH));
         mapPane = new Pane();
         mapImage = new ImageView(loadImage(props.getProperty(PropertyType.MAP_IMG)));
         mapPane.getChildren().setAll(mapImage);
@@ -333,15 +338,27 @@ public class UI {
 
         cityName = new Label();
         HBox top = new HBox(2);
+        top.getChildren().addAll(about, moveHistoryButton, cityName);
+
         cardsPane = new Pane();
         Label label = new Label();
         label.setLayoutX(0);
         label.setLayoutY(0);
         cardsPane.getChildren().add(label);
-        top.getChildren().addAll(about, moveHistoryButton, cityName);
+
+        infoPane = new VBox();
+        die = new ImageView(loadImage(props.getPropertyOptionsList(PropertyType.DIE_IMG).get(5)));
+        rollButton = initButton(props.getProperty(PropertyType.ROLL_BUTTON));
+        rollButton.setOnAction((ActionEvent e) -> {
+            eventHandler.rollDie();
+        });
+        flightButton = initButton(props.getProperty(PropertyType.FLIGHT_BUTTON));
+        infoPane.getChildren().addAll(die, rollButton, flightButton);
+
         gameplayScreenPane.setTop(top);
         gameplayScreenPane.setCenter(gamePane);
         gameplayScreenPane.setLeft(cardsPane);
+        gameplayScreenPane.setRight(infoPane);
     }
 
     private void initAboutScreenPane() {
@@ -487,7 +504,7 @@ public class UI {
         scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scroll.setPannable(true);
-        scroll.setPrefSize(paneWidth - cardWidth, paneHeight);
+        scroll.setPrefSize(paneWidth - cardWidth - dieWidth - dieWidth * 0.5, paneHeight);
         scroll.setContent(layout);
         return scroll;
     }
@@ -506,23 +523,25 @@ public class UI {
             errorHandler.processError(PropertyType.INVALID_DOC_ERROR_TEXT);
         }
     }
-    
+
     public void dealAnimate(LinkedList<Player> players) {
         ObservableList<Node> children = cardsPane.getChildren();
-        if(players.size() == 0) {
+        if (players.size() == 0) {
             Player player = gsm.getGameData().getCurrentPlayer();
             children.remove(1, children.size());
-            Label label = (Label)children.get(0);
+            Label label = (Label) children.get(0);
             label.setText(player.getName());
             ArrayList<Card> cards = player.getCards();
-            for(Card card : cards)
+            for (Card card : cards) {
                 cardsPane.getChildren().add(card.getCardIcon());
+            }
             return;
         }
         LinkedList cards = new LinkedList(players.getFirst().getCards());
-        if(children.size() > 1)
+        if (children.size() > 1) {
             children.remove(1, children.size());
-        Label label = (Label)children.get(0);
+        }
+        Label label = (Label) children.get(0);
         label.setText(players.getFirst().getName());
         players.removeFirst();
         cardsAnimate(players, cards, cards.size());
@@ -586,17 +605,18 @@ public class UI {
     }
 
     public void movePlayer(Player player, double x, double y, City city) {
-        if(animRunning)
+        if (animRunning) {
             return;
+        }
         animRunning = true;
         ImageView playerIcon = player.getPlayerIcon();
-        double time = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2))*velocity;
+        double time = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)) * velocity;
         TranslateTransition translateTransition
                 = new TranslateTransition(Duration.millis(time), playerIcon);
         translateTransition.setFromX(0);
         translateTransition.setToX(x);
         translateTransition.setFromY(0);
-        translateTransition.setToY (y);
+        translateTransition.setToY(y);
         translateTransition.setCycleCount(1);
         translateTransition.setInterpolator(Interpolator.LINEAR);
         translateTransition.setOnFinished((ActionEvent event) -> {
@@ -606,7 +626,7 @@ public class UI {
             playerIcon.setTranslateY(0);
             playerIcon.setLayoutX(playerIcon.getLayoutX() + x);
             playerIcon.setLayoutY(playerIcon.getLayoutY() + y);
-            gsm.getGameData().incCurrentMove();
+            gsm.nextMove();
         });
         translateTransition.play();
     }
@@ -638,8 +658,19 @@ public class UI {
     public GameStateManager getGSM() {
         return gsm;
     }
-    
+
     public boolean isAnimRunning() {
         return animRunning;
+    }
+
+    public void loadDie(String path) {
+        die = new ImageView(loadImage(path));
+        ObservableList children = infoPane.getChildren();
+        children.remove(0);
+        children.add(0, die);
+    }
+
+    public Pane getCardsPane() {
+        return cardsPane;
     }
 }

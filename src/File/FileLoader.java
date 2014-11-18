@@ -12,7 +12,16 @@ import Main.Main.PropertyType;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import properties_manager.PropertiesManager;
 
 /**
@@ -58,7 +67,7 @@ public class FileLoader {
         // RETURN THE TEXT
         return textToReturn;
     }
-    
+
     public static void loadMap(Map map) throws IOException {
         loadCityPoints(map);
         loadConnections(map);
@@ -81,11 +90,71 @@ public class FileLoader {
             map.addLocation(c);
         }
     }
-    
+
     private static void loadConnections(Map map) {
-        
+        try {
+            Document dom = parseXmlFile();
+            if (dom == null) {
+                return;
+            }
+            parseDocument(dom, map);
+
+        } catch (org.xml.sax.SAXException ex) {
+            Logger.getLogger(FileLoader.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-    
+
+    private static Document parseXmlFile() throws org.xml.sax.SAXException {
+        //get the factory
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+
+        try {
+
+            //Using factory get an instance of document builder
+            DocumentBuilder db = dbf.newDocumentBuilder();
+
+            PropertiesManager props = PropertiesManager.getPropertiesManager();
+            String dataPath = props.getProperty(PropertyType.DATA_PATH);
+            String connectionsFile = props.getProperty(PropertyType.CONNECTIONS_FILE);
+            //parse using builder to get DOM representation of the XML file
+            return db.parse(dataPath + connectionsFile);
+
+        } catch (ParserConfigurationException | IOException pce) {
+
+        }
+
+        return null;
+    }
+
+    private static void parseDocument(Document dom, Map map) {
+        //get the root element
+        Element docEle = dom.getDocumentElement();
+
+        NodeList nl = docEle.getElementsByTagName("cityConnections");
+        if (nl != null && nl.getLength() > 0) {
+            for (int i = 0; i < nl.getLength(); i++) {
+                Element ele = (Element)nl.item(i);
+                String name = ele.getElementsByTagName("name").item(0).getTextContent();
+                Element landConnections = (Element)ele.getElementsByTagName("land").item(0);
+                Element seaConnections = (Element)ele.getElementsByTagName("sea").item(0);
+                NodeList lc = landConnections.getElementsByTagName("city");
+                NodeList sc = seaConnections.getElementsByTagName("city");
+                City city = map.getCity(name.replace("_", " "));
+                if(city == null)
+                    continue;
+                ArrayList<City> cities = new ArrayList<>();
+                for(int j = 0; j < lc.getLength(); j++) {
+                    cities.add(map.getCity(lc.item(j).getTextContent()));
+                }
+                
+                for(int j = 0; j < sc.getLength(); j++) {
+                    cities.add(map.getCity(sc.item(j).getTextContent()));
+                }
+                city.setCities(cities);
+            }
+        }
+    }
+
     /**
      *
      * @param cards
@@ -100,10 +169,10 @@ public class FileLoader {
         String line;
         String seperator = ",";
         while ((line = br.readLine()) != null) {
-           // use space as separator
-           String[] city = line.split(seperator);
-           Card card = new Card(city[0],"",city[1],false,0,null,false,city[2]);
-           cards.put(city[0], card);
+            // use space as separator
+            String[] city = line.split(seperator);
+            Card card = new Card(city[0], "", city[1], false, 0, null, false, city[2]);
+            cards.put(city[0], card);
         }
     }
 }

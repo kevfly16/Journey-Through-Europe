@@ -1,14 +1,14 @@
 
 <routes>
-    <city>
+    <cityConnections>
         <name>CORK</name>
         <land>
             <city>DUBLIN</city>
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>FAROER</name>
         <land>
         </land>
@@ -17,8 +17,8 @@
             <city>SHETLAND_ISLANDS</city>
             <city>MALMO</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>MAGDEBURG</name>
         <land>
             <city>BERLIN</city>
@@ -26,8 +26,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>BELFAST</name>
         <land>
             <city>DUBLIN</city>
@@ -35,8 +35,8 @@
         <sea>
             <city>GLASGOW</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>MALMO</name>
         <land>
             <city>JONKOPING</city>
@@ -45,8 +45,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>KIEL</name>
         <land>
             <city>ARHUS</city>
@@ -54,8 +54,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>OULU</name>
         <land>
             <city>VAASA</city>
@@ -63,8 +63,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>MINSK</name>
         <land>
             <city>SMOLENSK</city>
@@ -72,8 +72,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>GRONINGEN</name>
         <land>
             <city>HAMBURG</city>
@@ -81,8 +81,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>STAVANGER</name>
         <land>
             <city>OSLO</city>
@@ -90,8 +90,8 @@
         <sea>
             <city>BERGEN</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>LEEDS</name>
         <land>
             <city>LONDON</city>
@@ -100,8 +100,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>NORRKOPING</name>
         <land>
             <city>JONKOPING</city>
@@ -109,8 +109,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>VAASA</name>
         <land>
             <city>OULU</city>
@@ -118,8 +118,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>GAVLE</name>
         <land>
             <city>SUNDSVALL</city>
@@ -127,8 +127,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>LUBECK</name>
         <land>
             <city>KOBENHAVN</city>
@@ -137,8 +137,8 @@
         <sea>
             <city>STOCKHOLM</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>VITEBSK</name>
         <land>
             <city>LENINGRAD</city>
@@ -147,8 +147,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>JONKOPING</name>
         <land>
             <city>NORRKOPING</city>
@@ -157,8 +157,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>TORONDHEIM</name>
         <land>
             <city>SUNDSVALL</city>
@@ -167,8 +167,8 @@
             <city>NARVIK</city>
             <city>BERGEN</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>POZNAN</name>
         <land>
             <city>GDANSK</city>
@@ -179,8 +179,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>HANNOVER</name>
         <land>
             <city>HAMBURG</city>
@@ -190,8 +190,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>KARLSTAD</name>
         <land>
             <city>OSLO</city>
@@ -199,8 +199,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>NEWCASTLE</name>
         <land>
             <city>GLASGOW</city>
@@ -210,8 +210,8 @@
             <city>BERGEN</city>
             <city>BREMEN</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>ARKHANGEL'SK</name>
         <land>
             <city>LENINGRAD</city>
@@ -220,8 +220,8 @@
         <sea>
             <city>HAMMERFEST</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>GOTEBORG</name>
         <land>
             <city>JONKOPING</city>
@@ -230,16 +230,16 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>SZCZECIN</name>
         <land>
             <city>POZNAN</city>
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>TALLIN</name>
         <land>
             <city>LENINGRAD</city>
@@ -247,8 +247,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>INVERNESS</name>
         <land>
             <city>ABERDEEN</city>
@@ -256,8 +256,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>TAMPERE</name>
         <land>
             <city>VAASA</city>
@@ -265,8 +265,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>SUNDSVALL</name>
         <land>
             <city>LULEA</city>
@@ -274,8 +274,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>LIVERPOOL</name>
         <land>
             <city>LEEDS</city>
@@ -284,8 +284,8 @@
         <sea>
             <city>DUBLIN</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>LULEA</name>
         <land>
             <city>KIRUNA</city>
@@ -294,8 +294,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>SMOLENSK</name>
         <land>
             <city>VITEBSK</city>
@@ -305,8 +305,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>NARVIK</name>
         <land>
             <city>KIRUNA</city>
@@ -315,8 +315,8 @@
             <city>HAMMERFEST</city>
             <city>TORONDHEIM</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>ARHUS</name>
         <land>
             <city>KOBENHAVN</city>
@@ -325,16 +325,16 @@
         <sea>
             <city>OSLO</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>ROSTOCK</name>
         <land>
             <city>BERLIN</city>
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>BIRMINGHAM</name>
         <land>
             <city>LONDON</city>
@@ -343,8 +343,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>BREMEN</name>
         <land>
             <city>KIEL</city>
@@ -356,8 +356,8 @@
         <sea>
             <city>NEWCASTLE</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>ABERDEEN</name>
         <land>
             <city>INVERNESS</city>
@@ -366,8 +366,8 @@
         <sea>
             <city>SHETLAND_ISLANDS</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>KIRUNA</name>
         <land>
             <city>NARVIK</city>
@@ -375,8 +375,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>GLASGOW</name>
         <land>
             <city>INVERNESS</city>
@@ -387,8 +387,8 @@
         <sea>
             <city>BELFAST</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>BERGEN</name>
         <land>
             <city>OSLO</city>
@@ -398,8 +398,8 @@
             <city>STAVANGER</city>
             <city>NEWCASTLE</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>BRISTOL</name>
         <land>
             <city>BIRMINGHAM</city>
@@ -407,8 +407,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>LONDON</name>
         <land>
             <city>LEEDS</city>
@@ -421,16 +421,16 @@
             <city>ROTTERDAM</city>
             <city>OSLO</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>REYKJAVIK</name>
         <land>
         </land>
         <sea>
             <city>FAROER</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>RIGA</name>
         <land>
             <city>TALLIN</city>
@@ -439,8 +439,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>GDANSK</name>
         <land>
             <city>WARSZAWA</city>
@@ -448,8 +448,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>KOBENHAVN</name>
         <land>
             <city>MALMO</city>
@@ -459,8 +459,8 @@
         <sea>
             <city>FAROER</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>HAMMERFEST</name>
         <land>
             <city>ROVANIEMI</city>
@@ -469,8 +469,8 @@
             <city>NARVIK</city>
             <city>ARKHANGEL'SK</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>ROVANIEMI</name>
         <land>
             <city>HAMMERFEST</city>
@@ -479,8 +479,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>SHETLAND_ISLANDS</name>
         <land>
         </land>
@@ -488,8 +488,8 @@
             <city>FAROER</city>
             <city>ABERDEEN</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>STOCKHOLM</name>
         <land>
             <city>GAVLE</city>
@@ -500,8 +500,8 @@
             <city>KIEL</city>
             <city>HELSINKI</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>HAMBURG</name>
         <land>
             <city>BREMEN</city>
@@ -511,8 +511,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>OSLO</name>
         <land>
             <city>BERGEN</city>
@@ -524,8 +524,8 @@
             <city>ARHUS</city>
             <city>LONDON</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>HELSINKI</name>
         <land>
             <city>TAMPERE</city>
@@ -534,8 +534,8 @@
         <sea>
             <city>STOCKHOLM</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>LENINGRAD</name>
         <land>
             <city>HELSINKI</city>
@@ -546,8 +546,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>WARSZAWA</name>
         <land>
             <city>RIGA</city>
@@ -558,8 +558,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>BERLIN</name>
         <land>
             <city>BREMEN</city>
@@ -570,8 +570,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>MOSKVA</name>
         <land>
             <city>LENINGRAD</city>
@@ -581,8 +581,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>DUBLIN</name>
         <land>
             <city>BELFAST</city>
@@ -591,8 +591,8 @@
         <sea>
             <city>LIVERPOOL</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>AMSTERDAM</name>
         <land>
             <city>GRONINGEN</city>
@@ -601,8 +601,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>THESSALONIKI</name>
         <land>
             <city>SKOPJE</city>
@@ -611,8 +611,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>PISA</name>
         <land>
             <city>FIRENZE</city>
@@ -621,8 +621,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>SARAJEVO</name>
         <land>
             <city>ZAGREB</city>
@@ -631,8 +631,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>SPLIT</name>
         <land>
             <city>ZAGREB</city>
@@ -642,8 +642,8 @@
         <sea>
             <city>ANCONA</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>BIARRITZ</name>
         <land>
             <city>BORDEAUX</city>
@@ -652,8 +652,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>TORINO</name>
         <land>
             <city>MILANO</city>
@@ -661,8 +661,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>TOULOUSE</name>
         <land>
             <city>BORDEAUX</city>
@@ -671,8 +671,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>PESCARA</name>
         <land>
             <city>ANCONA</city>
@@ -681,8 +681,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>CADIZ</name>
         <land>
             <city>SEVILLA</city>
@@ -691,8 +691,8 @@
             <city>MALAGA</city>
             <city>LISBOA</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>VALLADOLID</name>
         <land>
             <city>SANTANDER</city>
@@ -701,8 +701,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>SASSARI</name>
         <land>
             <city>CAGLIARI</city>
@@ -710,8 +710,8 @@
         <sea>
             <city>AJACCIO</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>CORDOBA</name>
         <land>
             <city>MADRID</city>
@@ -720,8 +720,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>SKOPJE</name>
         <land>
             <city>NIS</city>
@@ -729,8 +729,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>ALICANTE</name>
         <land>
             <city>VALENCIA</city>
@@ -739,8 +739,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>SAN_SEBASTIAN</name>
         <land>
             <city>BIARRITZ</city>
@@ -749,8 +749,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>BOLOGNA</name>
         <land>
             <city>VENEZIA</city>
@@ -761,8 +761,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>MESSINA</name>
         <land>
             <city>NAPOLI</city>
@@ -771,8 +771,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>GENOVA</name>
         <land>
             <city>MILANO</city>
@@ -783,8 +783,8 @@
             <city>MARSEILLE</city>
             <city>NAPOLI</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>VALENCIA</name>
         <land>
             <city>BARCELONA</city>
@@ -795,8 +795,8 @@
             <city>PALMA_MALLORCA</city>
             <city>MALAGA</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>PORTO</name>
         <land>
             <city>LA_CORUNA</city>
@@ -808,8 +808,8 @@
             <city>BORDEAUX</city>
 
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>MALAGA</name>
         <land>
             <city>SEVILLA</city>
@@ -819,8 +819,8 @@
             <city>CADIZ</city>
             <city>VALENCIA</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>COIMBRA</name>
         <land>
             <city>PORTO</city>
@@ -828,8 +828,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>SANTANDER</name>
         <land>
             <city>SAN_SEBASTIAN</city>
@@ -838,8 +838,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>LA_CORUNA</name>
         <land>
             <city>SANTANDER</city>
@@ -848,8 +848,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>PALERMO</name>
         <land>
             <city>MESSINA</city>
@@ -857,8 +857,8 @@
         <sea>
             <city>CAGLIARI</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>BADAJOZ</name>
         <land>
             <city>MADRID</city>
@@ -867,8 +867,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>PATRAI</name>
         <land>
             <city>ATHINAI</city>
@@ -876,8 +876,8 @@
         <sea>
             <city>ANCONA</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>ZARAGOZA</name>
         <land>
             <city>SAN_SEBASTIAN</city>
@@ -886,8 +886,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>EDIRNE</name>
         <land>
             <city>ISTANBUL</city>
@@ -896,8 +896,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>VARNA</name>
         <land>
             <city>BUCURESTI</city>
@@ -907,8 +907,8 @@
             <city>CONSTANTA</city>
             <city>ISTANBUL</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>TARANTO</name>
         <land>
             <city>BARI</city>
@@ -917,8 +917,8 @@
         <sea>
             <city>ATHINAI</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>ANCONA</name>
         <land>
             <city>BOLOGNA</city>
@@ -929,8 +929,8 @@
             <city>SPLIT</city>
             <city>PATRAI</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>NARBONNE</name>
         <land>
             <city>CLERMONT-FERRAND</city>
@@ -940,8 +940,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>NIS</name>
         <land>
             <city>BEOGRAD</city>
@@ -950,8 +950,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>LARISA</name>
         <land>
             <city>THESSALONIKI</city>
@@ -959,8 +959,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>PLOVDIV</name>
         <land>
             <city>SOFIJA</city>
@@ -968,8 +968,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>PALMA_MALLORCA</name>
         <land>
         </land>
@@ -977,8 +977,8 @@
             <city>BARCELONA</city>
             <city>VALENCIA</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>SOFIJA</name>
         <land>
             <city>NIS</city>
@@ -988,8 +988,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>NAPOLI</name>
         <land>
             <city>ROMA</city>
@@ -1001,15 +1001,15 @@
             <city>AJACCIO</city>
             <city>CAGLIARI</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>TIRANE</name>
         <land>
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>BARI</name>
         <land>
             <city>PESCARA</city>
@@ -1017,8 +1017,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>LISBOA</name>
         <land>
             <city>COIMBRA</city>
@@ -1028,8 +1028,8 @@
             <city>PORTO</city>
             <city>CADIZ</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>ISTANBUL</name>
         <land>
             <city>EDIRNE</city>
@@ -1038,8 +1038,8 @@
             <city>VARNA</city>
             <city>ATHINAI</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>MILANO</name>
         <land>
             <city>BOLOGNA</city>
@@ -1049,8 +1049,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>BORDEAUX</name>
         <land>
             <city>NANTES</city>
@@ -1063,8 +1063,8 @@
             <city>BREST</city>
             <city>PORTO</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>DUBROVNIK</name>
         <land>
             <city>SARAJEVO</city>
@@ -1072,16 +1072,16 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>CATANIA</name>
         <land>
             <city>MESSINA</city>
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>VENEZIA</name>
         <land>
             <city>TRIESTE</city>
@@ -1089,8 +1089,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>SEVILLA</name>
         <land>
             <city>BADAJOZ</city>
@@ -1100,8 +1100,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>GRANADA</name>
         <land>
             <city>MADRID</city>
@@ -1111,8 +1111,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>BEOGRAD</name>
         <land>
             <city>BUDAPEST</city>
@@ -1122,8 +1122,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>CAGLIARI</name>
         <land>
             <city>BUDAPEST</city>
@@ -1133,8 +1133,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>FIRENZE</name>
         <land>
             <city>BOLOGNA</city>
@@ -1143,8 +1143,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>ATHINAI</name>
         <land>
             <city>LARISA</city>
@@ -1154,8 +1154,8 @@
             <city>TARANTO</city>
             <city>ISTANBUL</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>NICE</name>
         <land>
             <city>GENOVA</city>
@@ -1163,8 +1163,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>MARSEILLE</name>
         <land>
             <city>NICE</city>
@@ -1176,8 +1176,8 @@
             <city>AJACCIO</city>
             <city>BARCELONA</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>MADRID</name>
         <land>
             <city>VALLADOLID</city>
@@ -1190,8 +1190,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>BARCELONA</name>
         <land>
             <city>NARBONNE</city>
@@ -1203,8 +1203,8 @@
             <city>AJACCIO</city>
             <city>PALMA_MALLORCA</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>ROMA</name>
         <land>
             <city>PISA</city>
@@ -1215,8 +1215,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>AJACCIO</name>
         <land>
         </land>
@@ -1226,8 +1226,8 @@
             <city>SASSARI</city>
             <city>NAPOLI</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>NURNBERG</name>
         <land>
             <city>MUNCHEN</city>
@@ -1239,8 +1239,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>BRNO</name>
         <land>
             <city>WROCLAW</city>
@@ -1251,8 +1251,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>CONSTANTA</name>
         <land>
             <city>BUCURESTI</city>
@@ -1261,8 +1261,8 @@
             <city>ODESSA</city>
             <city>VARNA</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>NANCY</name>
         <land>
             <city>LUXEMBOURG</city>
@@ -1272,8 +1272,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>CLERMONT-FERRAND</name>
         <land>
             <city>LUXEMBOURG</city>
@@ -1283,8 +1283,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>LYON</name>
         <land>
             <city>DIJON</city>
@@ -1295,8 +1295,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>STUTTGART</name>
         <land>
             <city>FIRENZE</city>
@@ -1305,8 +1305,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>REIMS</name>
         <land>
             <city>BRUXELLES</city>
@@ -1315,8 +1315,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>BASEL</name>
         <land>
             <city>STRASBOURG</city>
@@ -1326,8 +1326,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>ODESSA</name>
         <land>
             <city>VINNICA</city>
@@ -1336,8 +1336,8 @@
         <sea>
             <city>CONSTANTA</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>LEIPZIG</name>
         <land>
             <city>DRESDEN</city>
@@ -1346,8 +1346,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>CLUJ-NAPOCA</name>
         <land>
             <city>BUDAPEST</city>
@@ -1356,8 +1356,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>PLZEN</name>
         <land>
             <city>PRAHA</city>
@@ -1365,8 +1365,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>DOVER</name>
         <land>
             <city>LONDON</city>
@@ -1374,8 +1374,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>ZAGREB</name>
         <land>
             <city>GRAZ</city>
@@ -1388,8 +1388,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>RENNES</name>
         <land>
             <city>BREST</city>
@@ -1398,8 +1398,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>TRIESTE</name>
         <land>
             <city>ZAGREB</city>
@@ -1408,8 +1408,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>LIMOGES</name>
         <land>
             <city>BOURGES</city>
@@ -1418,8 +1418,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>GALATI</name>
         <land>
             <city>CERNOVCY</city>
@@ -1429,8 +1429,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>KASSEL</name>
         <land>
             <city>HANNOVER</city>
@@ -1441,8 +1441,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>WROCLAW</name>
         <land>
             <city>POZNAN</city>
@@ -1454,8 +1454,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>DIJON</name>
         <land>
             <city>PARIS</city>
@@ -1465,8 +1465,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>TOURS</name>
         <land>
             <city>ORLEANS</city>
@@ -1475,8 +1475,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>LINZ</name>
         <land>
             <city>PRAHA</city>
@@ -1486,8 +1486,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>LE_HAVRE</name>
         <land>
             <city>CALAIS</city>
@@ -1497,8 +1497,8 @@
             <city>PLYMOUTH</city>
             <city>BREST</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>SALZBURG</name>
         <land>
             <city>LINZ</city>
@@ -1508,8 +1508,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>LILLE</name>
         <land>
             <city>BRUXELLES</city>
@@ -1518,8 +1518,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>GRAZ</name>
         <land>
             <city>WIEN</city>
@@ -1528,8 +1528,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>CALAIS</name>
         <land>
             <city>DOVER</city>
@@ -1539,8 +1539,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>KRAKOV</name>
         <land>
             <city>WARSZAWA</city>
@@ -1550,8 +1550,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>L'VOV</name>
         <land>
             <city>KRAKOV</city>
@@ -1561,8 +1561,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>CERNOVCY</name>
         <land>
             <city>L'VOV</city>
@@ -1570,8 +1570,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>LODZ</name>
         <land>
             <city>WARSZAWA</city>
@@ -1580,8 +1580,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>CHARKOV</name>
         <land>
             <city>MOSKVA</city>
@@ -1590,8 +1590,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>ROTTERDAM</name>
         <land>
             <city>AMSTERDAM</city>
@@ -1600,8 +1600,8 @@
         <sea>
             <city>LONDON</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>PLYMOUTH</name>
         <land>
             <city>LONDON</city>
@@ -1610,8 +1610,8 @@
             <city>LE_HAVRE</city>
             <city>PORTO</city>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>NANTES</name>
         <land>
             <city>RENNES</city>
@@ -1620,8 +1620,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>VINNICA</name>
         <land>
             <city>KIJEV</city>
@@ -1630,8 +1630,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>KIJEV</name>
         <land>
             <city>SMOLENSK</city>
@@ -1640,8 +1640,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>BOURGES</name>
         <land>
             <city>ORLEANS</city>
@@ -1649,8 +1649,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>MISKOLC</name>
         <land>
             <city>L'VOV</city>
@@ -1659,8 +1659,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>BOLZANO</name>
         <land>
             <city>INNSBRUCK</city>
@@ -1668,8 +1668,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>BUCURESTI</name>
         <land>
             <city>CLUJ-NAPOCA</city>
@@ -1680,8 +1680,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>GENEVE</name>
         <land>
             <city>LYON</city>
@@ -1689,8 +1689,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>STRASBOURG</name>
         <land>
             <city>FRANKFURT</city>
@@ -1700,8 +1700,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>ZURICH</name>
         <land>
             <city>BASEL</city>
@@ -1710,8 +1710,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>PARIS</name>
         <land>
             <city>LE_HAVRE</city>
@@ -1725,8 +1725,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>PRAHA</name>
         <land>
             <city>WROCLAW</city>
@@ -1738,8 +1738,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>ORLEANS</name>
         <land>
             <city>PARIS</city>
@@ -1748,8 +1748,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>KOLN</name>
         <land>
             <city>HAMBURG</city>
@@ -1761,8 +1761,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>BERN</name>
         <land>
             <city>BASEL</city>
@@ -1770,8 +1770,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>FRANKFURT</name>
         <land>
             <city>KASSEL</city>
@@ -1782,8 +1782,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>INNSBRUCK</name>
         <land>
             <city>MUNCHEN</city>
@@ -1793,8 +1793,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>BUDAPEST</name>
         <land>
             <city>MISKOLC</city>
@@ -1806,8 +1806,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>BRUXELLES</name>
         <land>
             <city>ROTTERDAM</city>
@@ -1818,8 +1818,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>DRESDEN</name>
         <land>
             <city>BERLIN</city>
@@ -1829,8 +1829,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>LUXEMBOURG</name>
         <land>
             <city>KOLN</city>
@@ -1839,8 +1839,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>MUNCHEN</name>
         <land>
             <city>NURNBERG</city>
@@ -1850,8 +1850,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>WIEN</name>
         <land>
             <city>BRNO</city>
@@ -1862,8 +1862,8 @@
         </land>
         <sea>
         </sea>
-    </city>
-    <city>
+    </cityConnections>
+    <cityConnections>
         <name>BREST</name>
         <land>
             <city>RENNES</city>
@@ -1872,5 +1872,5 @@
             <city>LE_HAVRE</city>
             <city>BORDEAUX</city>
         </sea>
-    </city>
+    </cityConnections>
 </routes>

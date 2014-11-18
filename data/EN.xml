@@ -10,6 +10,8 @@
         <property name="QUIT_BUTTON"            value="quit.png"></property>
         <property name="BACK_BUTTON"            value="back.png"></property>
         <property name="HISTORY_BUTTON"         value="history.png"></property>
+        <property name="ROLL_BUTTON"            value="roll.png"></property>
+        <property name="FLIGHT_BUTTON"          value="flight.png"></property>
         <property name="GO_BUTTON"              value="go.png"></property>
         <property name="LOGO_IMG"               value="logo.jpg"></property>
 
