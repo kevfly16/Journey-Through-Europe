@@ -124,6 +124,15 @@ public class GameStateManager {
         return true;
     }
 
+    public void decCurrentPoints() {
+        Player player = gameData.getCurrentPlayer();
+        player.decPoints(1);
+        ui.loadPointsLeft(player.getCurrentPoints());
+        if (player.getCurrentPoints() == 0) {
+            nextMove();
+        }
+    }
+
     public boolean hasWon(Player player) {
         return player.hasWon();
     }
@@ -143,15 +152,24 @@ public class GameStateManager {
     }
 
     public void nextMove() {
+        Player p = gameData.getCurrentPlayer();
+        if (p.getRoll() == 6) {
+            if (gameData.getCurrentPlayer().isPlayer()) {
+                setGameState(GameState.PLAYER_ROLL);
+            } else {
+                setGameState(GameState.COMPUTER_ROLL);
+            }
+            ui.loadRollAgain();
+            return;
+        }
         gameData.incCurrentMove();
         if (gameData.getCurrentPlayer().isPlayer()) {
             setGameState(GameState.PLAYER_ROLL);
         } else {
             setGameState(GameState.COMPUTER_ROLL);
         }
-
+        p = gameData.getCurrentPlayer();
         ObservableList<Node> children = ui.getCardsPane().getChildren();
-        Player p = gameData.getCurrentPlayer();
         children.remove(1, children.size());
         Label label = (Label) children.get(0);
         label.setText(p.getName());
@@ -159,6 +177,7 @@ public class GameStateManager {
         for (Card card : cards) {
             ui.getCardsPane().getChildren().add(card.getCardIcon());
         }
+        ui.loadPlayer(p.getName());
     }
 
 }

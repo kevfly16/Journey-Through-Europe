@@ -18,11 +18,11 @@ import properties_manager.PropertiesManager;
  * @author Kevin
  */
 public class Main extends Application {
-    
+
     static String UI_PROPERTIES_FILE_NAME = "properties.xml";
     static String PROPERTIES_SCHEMA_FILE_NAME = "schema.xsd";
     static String DATA_PATH = "./data/";
-    
+
     @Override
     public void start(Stage primaryStage) {
         try {
@@ -63,6 +63,7 @@ public class Main extends Application {
 
     public enum PropertyType {
         /* SETUP FILE NAMES */
+
         UI_PROPERTIES_FILE_NAME, PROPERTIES_SCHEMA_FILE_NAME,
         /* DIRECTORIES FOR FILE LOADING */
         DATA_PATH, IMG_PATH, MUS_PATH,

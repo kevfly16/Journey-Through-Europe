@@ -10,29 +10,34 @@ import Game.Card;
 import Game.City;
 import Game.GameData;
 import Game.GameStateManager;
-import Game.GameStateManager.GameState;
 import Game.Player;
 import Main.Main.PropertyType;
-import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import javafx.animation.Animation;
 import javafx.animation.Interpolator;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
-import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -42,7 +47,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.BorderStroke;
@@ -51,7 +60,6 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
@@ -117,8 +125,9 @@ public class UI {
     private ArrayList<String> flagPaths;
     private final int cardYFactor = 65;
     private final int cardYConstant = 25;
-    private final int velocity = 4;
     private ImageView die;
+    private final BooleanProperty dragModeActiveProperty
+            = new SimpleBooleanProperty(this, "dragModeActive", true);
 
     /**
      * The UIState represents the four screen states that are possible for the
@@ -303,6 +312,38 @@ public class UI {
         cardWidth = Integer.parseInt(props.getProperty(PropertyType.CARD_WIDTH));
         cardHeight = Integer.parseInt(props.getProperty(PropertyType.CARD_HEIGHT));
         dieWidth = Integer.parseInt(props.getProperty(PropertyType.DIE_WIDTH));
+
+        initGamePane(props);
+
+        Button about = initButton(props.getProperty(PropertyType.ABOUT_BUTTON));
+        about.setOnAction((ActionEvent e) -> {
+            changeWorkspace(UIState.ABOUT_SCREEN_STATE);
+        });
+
+        moveHistoryButton = initButton(props.getProperty(PropertyType.HISTORY_BUTTON));
+        moveHistoryButton.setOnAction((ActionEvent e) -> {
+            changeWorkspace(UIState.HISTORY_SCREEN_STATE);
+        });
+
+        cityName = new Label();
+        HBox top = new HBox(2);
+        top.getChildren().addAll(about, moveHistoryButton, cityName);
+
+        cardsPane = new Pane();
+        Label label = new Label();
+        label.setLayoutX(0);
+        label.setLayoutY(0);
+        cardsPane.getChildren().add(label);
+
+        initInfoPane(props);
+
+        gameplayScreenPane.setTop(top);
+        gameplayScreenPane.setCenter(gamePane);
+        gameplayScreenPane.setLeft(cardsPane);
+        gameplayScreenPane.setRight(infoPane);
+    }
+
+    private void initGamePane(PropertiesManager props) {
         mapPane = new Pane();
         mapImage = new ImageView(loadImage(props.getProperty(PropertyType.MAP_IMG)));
         mapPane.getChildren().setAll(mapImage);
@@ -325,40 +366,22 @@ public class UI {
             }
             dragging = false;
         });
+    }
 
-        Button about = initButton(props.getProperty(PropertyType.ABOUT_BUTTON));
-        about.setOnAction((ActionEvent e) -> {
-            changeWorkspace(UIState.ABOUT_SCREEN_STATE);
-        });
-
-        moveHistoryButton = initButton(props.getProperty(PropertyType.HISTORY_BUTTON));
-        moveHistoryButton.setOnAction((ActionEvent e) -> {
-            changeWorkspace(UIState.HISTORY_SCREEN_STATE);
-        });
-
-        cityName = new Label();
-        HBox top = new HBox(2);
-        top.getChildren().addAll(about, moveHistoryButton, cityName);
-
-        cardsPane = new Pane();
-        Label label = new Label();
-        label.setLayoutX(0);
-        label.setLayoutY(0);
-        cardsPane.getChildren().add(label);
-
+    private void initInfoPane(PropertiesManager props) {
         infoPane = new VBox();
+        Label playerTurn = new Label();
+        Label pointsLeft = new Label("Points Left: ");
         die = new ImageView(loadImage(props.getPropertyOptionsList(PropertyType.DIE_IMG).get(5)));
+        die.toBack();
         rollButton = initButton(props.getProperty(PropertyType.ROLL_BUTTON));
+        rollButton.toBack();
         rollButton.setOnAction((ActionEvent e) -> {
             eventHandler.rollDie();
         });
         flightButton = initButton(props.getProperty(PropertyType.FLIGHT_BUTTON));
-        infoPane.getChildren().addAll(die, rollButton, flightButton);
-
-        gameplayScreenPane.setTop(top);
-        gameplayScreenPane.setCenter(gamePane);
-        gameplayScreenPane.setLeft(cardsPane);
-        gameplayScreenPane.setRight(infoPane);
+        flightButton.toBack();
+        infoPane.getChildren().addAll(playerTurn, pointsLeft, die, rollButton, flightButton);
     }
 
     private void initAboutScreenPane() {
@@ -563,6 +586,7 @@ public class UI {
 
             }
         });
+        card.toFront();
         cardsPane.getChildren().add(card);
         TranslateTransition translateTransition
                 = new TranslateTransition(Duration.millis(3000), card);
@@ -598,10 +622,22 @@ public class UI {
             ImageView playerIcon = new ImageView(loadImage(player.getIconURL()));
             playerIcon.setLayoutX(player.getStartingCity().getPos().getX() - 50);
             playerIcon.setLayoutY(player.getStartingCity().getPos().getY() - 100);
+            playerIcon.toFront();
             mapPane.getChildren().add(playerIcon);
             player.setPlayerIcon(playerIcon);
             index++;
+            setDragListener(playerIcon);
         }
+        Label label = (Label) infoPane.getChildren().get(0);
+        label.setText(players.get(0).getName());
+    }
+
+    private void setDragListener(ImageView playerIcon) {
+        // TODO
+    }
+
+    private boolean isCurrentPlayer(ImageView playerIcon) {
+        return gsm.getGameData().getCurrentPlayer().getPlayerIcon() == playerIcon;
     }
 
     public void movePlayer(Player player, double x, double y, City city) {
@@ -610,9 +646,8 @@ public class UI {
         }
         animRunning = true;
         ImageView playerIcon = player.getPlayerIcon();
-        double time = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)) * velocity;
         TranslateTransition translateTransition
-                = new TranslateTransition(Duration.millis(time), playerIcon);
+                = new TranslateTransition(Duration.millis(1000), playerIcon);
         translateTransition.setFromX(0);
         translateTransition.setToX(x);
         translateTransition.setFromY(0);
@@ -626,7 +661,7 @@ public class UI {
             playerIcon.setTranslateY(0);
             playerIcon.setLayoutX(playerIcon.getLayoutX() + x);
             playerIcon.setLayoutY(playerIcon.getLayoutY() + y);
-            gsm.nextMove();
+            gsm.decCurrentPoints();
         });
         translateTransition.play();
     }
@@ -663,11 +698,31 @@ public class UI {
         return animRunning;
     }
 
-    public void loadDie(String path) {
+    public void loadDie(int roll, String path) {
         die = new ImageView(loadImage(path));
+        die.toBack();
         ObservableList children = infoPane.getChildren();
-        children.remove(0);
-        children.add(0, die);
+        children.remove(2);
+        children.add(2, die);
+        Label label = (Label) children.get(1);
+        label.setText("Points Left: " + roll);
+    }
+
+    public void loadPointsLeft(int roll) {
+        Label label = (Label) infoPane.getChildren().get(1);
+        label.setText("Points Left: " + roll);
+    }
+
+    public void loadPlayer(String playerName) {
+        Label label = (Label) infoPane.getChildren().get(0);
+        label.setText(playerName);
+        label = (Label) infoPane.getChildren().get(1);
+        label.setText("Points Left: ");
+    }
+    
+    public void loadRollAgain() { 
+        Label label = (Label) infoPane.getChildren().get(1);
+        label.setText("Roll Again");
     }
 
     public Pane getCardsPane() {

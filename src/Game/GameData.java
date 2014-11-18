@@ -34,23 +34,23 @@ public class GameData {
         initMap();
         initCards();
     }
-    
+
     public ArrayList<Move> getMoves() {
         return moves;
     }
-    
+
     public void addMove(Move move) {
         moves.add(move);
     }
-    
+
     public static void setPlayers(ArrayList<Player> p) {
         players = p;
     }
-    
+
     public static ArrayList<Player> getPlayers() {
         return players;
     }
-    
+
     public static Card getCard(String card) {
         return cards.get(card);
     }
@@ -58,24 +58,24 @@ public class GameData {
     public static Map getMap() {
         return map;
     }
-    
+
     public static int getCardsDealt() {
         return numCardsDealt;
     }
-    
+
     public static void setCardsDealt(int num) {
         numCardsDealt = num;
     }
-    
+
     public static LinkedList<Card> generateCards() {
         String[] c = new String[cards.size()];
         cards.keySet().toArray(c);
         LinkedList<Card> hand = new LinkedList();
-        String[] colors = new String[]{"green","red","yellow"};
-        for(int i = 0; i < numCardsDealt; i++) {
+        String[] colors = new String[]{"green", "red", "yellow"};
+        for (int i = 0; i < numCardsDealt; i++) {
             int rand = (int) (Math.random() * c.length);
             Card card = cards.get(c[rand]);
-            while(!card.getColor().equals(colors[i%colors.length]) || usedCards.get(card.getCity()) != null) {
+            while (!card.getColor().equals(colors[i % colors.length]) || usedCards.get(card.getCity()) != null) {
                 rand = (int) (Math.random() * c.length);
                 card = cards.get(c[rand]);
             }
@@ -84,31 +84,32 @@ public class GameData {
         }
         return hand;
     }
-    
+
     public Move getLastMove(Player player) {
         //TODO
         return new Move(player, null);
     }
-    
+
     public int getCurrentMove() {
         return currentMove;
     }
-    
+
     public void incCurrentMove() {
-        if(currentMove == players.size() - 1)
+        if (currentMove == players.size() - 1) {
             currentMove = 0;
-        else
+        } else {
             currentMove++;
+        }
     }
-    
+
     public Player getCurrentPlayer() {
         return players.get(currentMove);
     }
-    
+
     public void deleteLastMove(Player player) {
         //TODO
     }
-    
+
     private void initMap() {
         map = new Map();
         try {
@@ -120,7 +121,7 @@ public class GameData {
             UI.getErrorHandler().processError(PropertyType.INVALID_DOC_ERROR_TEXT);
         }
     }
-    
+
     private void initCards() {
         try {
             cards = new HashMap();

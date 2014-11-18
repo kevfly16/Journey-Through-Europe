@@ -48,6 +48,6 @@ public class JTEEventHandler {
             return;
         }
         
-        ui.loadDie(props.getPropertyOptionsList(Main.PropertyType.DIE_IMG).get(roll - 1));
+        ui.loadDie(roll, props.getPropertyOptionsList(Main.PropertyType.DIE_IMG).get(roll - 1));
     }
 }
