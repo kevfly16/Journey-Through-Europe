@@ -128,9 +128,12 @@ public class GameStateManager {
         Player player = gameData.getCurrentPlayer();
         player.decPoints(1);
         ui.loadPointsLeft(player.getCurrentPoints());
+        ui.removeLines();
         if (player.getCurrentPoints() == 0) {
             nextMove();
+            return;
         }
+        ui.drawLines();
     }
 
     public boolean hasWon(Player player) {

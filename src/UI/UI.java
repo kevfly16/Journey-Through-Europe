@@ -62,6 +62,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
@@ -128,6 +129,9 @@ public class UI {
     private ImageView die;
     private final BooleanProperty dragModeActiveProperty
             = new SimpleBooleanProperty(this, "dragModeActive", true);
+    private final String pointsLost;
+    private final String rollAgain;
+    private ArrayList<Line> lines;
 
     /**
      * The UIState represents the four screen states that are possible for the
@@ -157,6 +161,8 @@ public class UI {
         dragging = false;
         animRunning = false;
         currentPos = new Point2D(0, 0);
+        pointsLost = props.getProperty(PropertyType.POINTS_TEXT);
+        rollAgain = props.getProperty(PropertyType.ROLL_AGAIN_TEXT);
     }
 
     private void initMainPane() {
@@ -705,27 +711,57 @@ public class UI {
         children.remove(2);
         children.add(2, die);
         Label label = (Label) children.get(1);
-        label.setText("Points Left: " + roll);
+        label.setText(pointsLost + roll);
     }
 
     public void loadPointsLeft(int roll) {
         Label label = (Label) infoPane.getChildren().get(1);
-        label.setText("Points Left: " + roll);
+        label.setText(pointsLost + roll);
     }
 
     public void loadPlayer(String playerName) {
         Label label = (Label) infoPane.getChildren().get(0);
         label.setText(playerName);
         label = (Label) infoPane.getChildren().get(1);
-        label.setText("Points Left: ");
+        label.setText(pointsLost);
     }
-    
-    public void loadRollAgain() { 
+
+    public void loadRollAgain() {
         Label label = (Label) infoPane.getChildren().get(1);
-        label.setText("Roll Again");
+        label.setText(rollAgain);
     }
 
     public Pane getCardsPane() {
         return cardsPane;
+    }
+
+    public void drawLines() {
+        lines = new ArrayList<>();
+        City pos = gsm.getGameData().getCurrentPlayer().getCurrentPosition();
+        ArrayList<City> cities = pos.getCities();
+        for (City city : cities) {
+            if (city == null) {
+                continue;
+            }
+            Line line = new Line();
+            line.setStartX(pos.getPos().getX());
+            line.setStartY(pos.getPos().getY());
+            line.setEndX(city.getPos().getX());
+            line.setEndY(city.getPos().getY());
+            line.setStrokeWidth(7);
+            line.setStroke(Color.RED);
+            line.toFront();
+            mapPane.getChildren().add(line);
+            lines.add(line);
+        }
+    }
+
+    public void removeLines() {
+        if(lines == null)
+            return;
+        ObservableList children = mapPane.getChildren();
+        for (Line line : lines) {
+            children.remove(line);
+        }
     }
 }

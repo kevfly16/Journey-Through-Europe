@@ -30,6 +30,8 @@
         <property name="PLAYER_TEXT"            value="Player"></property>
         <property name="COMPUTER_TEXT"          value="Computer"></property>
         <property name="NUM_PLAYERS_TEXT"       value="Number of Players"></property>
+        <property name="POINTS_TEXT"            value="Points Lost: "></property>
+        <property name="ROLL_AGAIN_TEXT"        value="Roll Again"></property>
         
         <!-- TOOLTIPS -->
         <property name="GAME_TOOLTIP"           value="Go to Game Screen"></property>

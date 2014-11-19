@@ -47,7 +47,8 @@ public class JTEEventHandler {
         if(roll == 0) {
             return;
         }
-        
         ui.loadDie(roll, props.getPropertyOptionsList(Main.PropertyType.DIE_IMG).get(roll - 1));
+        ui.removeLines();
+        ui.drawLines();
     }
 }
