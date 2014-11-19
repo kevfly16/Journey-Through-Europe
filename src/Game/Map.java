@@ -108,7 +108,7 @@ public class Map {
             minIndex--;
         }
 
-        for (int i = minIndex; locations.get(i).getPos().getX() < max; i++) {
+        for (int i = minIndex; i < locations.size() && locations.get(i).getPos().getX() < max; i++) {
             City city = locations.get(i);
             if (city.computeDistance(point) < City.getRadius()) {
                 return city;

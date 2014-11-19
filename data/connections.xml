@@ -552,7 +552,6 @@
         <land>
             <city>RIGA</city>
             <city>MINSK</city>
-            <city>KRAKOV</city>
             <city>LODZ</city>
             <city>GDANSK</city>
         </land>
@@ -1247,7 +1246,6 @@
             <city>PRAHA</city>
             <city>WIEN</city>
             <city>MISKOLC</city>
-            <city>KRAKOV</city>
         </land>
         <sea>
         </sea>
@@ -1449,7 +1447,6 @@
             <city>DRESDEN</city>
             <city>PRAHA</city>
             <city>BRNO</city>
-            <city>KRAKOV</city>
             <city>LODZ</city>
         </land>
         <sea>
@@ -1543,10 +1540,9 @@
     <cityConnections>
         <name>KRAKOV</name>
         <land>
-            <city>WARSZAWA</city>
-            <city>WROCLAW</city>
-            <city>BRNO</city>
-            <city>L'VOV</city>
+            <city>KIJEV</city>
+            <city>MOSKVA</city>
+            <city>ODESSA</city>
         </land>
         <sea>
         </sea>
@@ -1554,7 +1550,6 @@
     <cityConnections>
         <name>L'VOV</name>
         <land>
-            <city>KRAKOV</city>
             <city>MISKOLC</city>
             <city>CERNOVCY</city>
             <city>VINNICA</city>
