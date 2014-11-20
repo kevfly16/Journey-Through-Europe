@@ -22,22 +22,17 @@ import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
+import javafx.scene.Cursor;
+import javafx.scene.ImageCursor;
 import javafx.scene.Node;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -47,11 +42,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.BorderStroke;
@@ -639,11 +630,55 @@ public class UI {
     }
 
     private void setDragListener(ImageView playerIcon) {
-        // TODO
+        playerIcon.setOnMouseDragged((MouseEvent e) -> {
+            if (isCurrentPlayer(playerIcon) && gsm.canMove()) {
+                gamePane.setPannable(false);
+                double x = e.getX();
+                double y = e.getY();
+                TranslateTransition translateTransition
+                        = new TranslateTransition(Duration.millis(3), playerIcon);
+                translateTransition.setToX(x);
+                translateTransition.setToY(y);
+                translateTransition.setCycleCount(1);
+                translateTransition.setInterpolator(Interpolator.LINEAR);
+                translateTransition.setOnFinished((ActionEvent event) -> {
+                    playerIcon.setTranslateX(0);
+                    playerIcon.setTranslateY(0);
+                    playerIcon.setLayoutX(playerIcon.getLayoutX() + x);
+                    playerIcon.setLayoutY(playerIcon.getLayoutY() + y);
+                });
+                translateTransition.play();
+            }
+        });
+
+        playerIcon.setOnMouseReleased((MouseEvent e) -> {
+            if (isCurrentPlayer(playerIcon) && gsm.canMove()) {
+                gamePane.setPannable(true);
+                Point2D point = new Point2D(playerIcon.getLayoutX(), playerIcon.getLayoutY());
+                Point2D origLoc = getCurrentPlayerPosition(playerIcon);
+                playerIcon.setLayoutX(origLoc.getX() - 50);
+                playerIcon.setLayoutY(origLoc.getY() - 100);
+                City city = GameData.getMap().findCity(point);
+                if (city != null) {
+                    eventHandler.movePlayer(city);
+                }
+            }
+        });
     }
 
     private boolean isCurrentPlayer(ImageView playerIcon) {
         return gsm.getGameData().getCurrentPlayer().getPlayerIcon() == playerIcon;
+    }
+
+    private Point2D getCurrentPlayerPosition(ImageView playerIcon) {
+        ArrayList<Player> players = GameData.getPlayers();
+        for (Player player : players) {
+            if (player.getPlayerIcon() == playerIcon) {
+                return player.getCurrentPosition().getPos();
+            }
+        }
+
+        return null;
     }
 
     public void movePlayer(Player player, double x, double y, City city) {
@@ -757,8 +792,9 @@ public class UI {
     }
 
     public void removeLines() {
-        if(lines == null)
+        if (lines == null) {
             return;
+        }
         ObservableList children = mapPane.getChildren();
         for (Line line : lines) {
             children.remove(line);

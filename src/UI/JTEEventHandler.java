@@ -36,7 +36,9 @@ public class JTEEventHandler {
         if(ui.isAnimRunning())
             return;
         Player player = ui.getGSM().getGameData().getCurrentPlayer();
-        ui.getGSM().move(player, city);
+        if(!ui.getGSM().move(player, city)) {
+            System.out.println("Invalid Move!");
+        }
     }
     
     public void rollDie() {

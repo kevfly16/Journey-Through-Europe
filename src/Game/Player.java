@@ -25,6 +25,7 @@ public class Player {
     private final ArrayList<City> visited;
     private int roll;
     private final boolean computer;
+    private City previousPosition;
 
     public Player(String n, String f, boolean c) {
         name = n;
@@ -37,6 +38,7 @@ public class Player {
         roll = 0;
         iconURL = initIconURL();
         computer = c;
+        previousPosition = null;
     }
 
     public String getName() {
@@ -64,7 +66,12 @@ public class Player {
     }
 
     public void setCurrentPosition(City city) {
+        previousPosition = currentPosition;
         currentPosition = city;
+    }
+    
+    public City getPreviousPosition() {
+        return previousPosition;
     }
 
     public City getFastestPath() {

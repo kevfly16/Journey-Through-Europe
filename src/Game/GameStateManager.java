@@ -118,6 +118,9 @@ public class GameStateManager {
         if (!GameData.getMap().getCity(player.getCurrentPosition().getName()).hasCity(dest)) {
             return false;
         }
+        if(player.getPreviousPosition() == dest) {
+            return false;
+        }
         double x = dest.getPos().getX() - player.getCurrentPosition().getPos().getX();
         double y = dest.getPos().getY() - player.getCurrentPosition().getPos().getY();
         ui.movePlayer(player, x, y, dest);
