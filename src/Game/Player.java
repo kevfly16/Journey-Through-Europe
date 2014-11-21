@@ -27,7 +27,7 @@ public class Player {
     private final boolean computer;
     private City previousPosition;
 
-    public Player(String n, String f, boolean c) {
+    public Player(String n, String f, String i, boolean c) {
         name = n;
         flagURL = f;
         skippedTurn = false;
@@ -36,7 +36,7 @@ public class Player {
         cards = new ArrayList();
         visited = new ArrayList();
         roll = 0;
-        iconURL = initIconURL();
+        iconURL = i;
         computer = c;
         previousPosition = null;
     }
@@ -125,9 +125,29 @@ public class Player {
     public void addVisited(City city) {
         visited.add(city);
     }
+    
+    public int getCard(City city) {
+        int index = 0;
+        for(Card card : cards) {
+            if(card.getCity().equalsIgnoreCase(city.getName())) {
+                break;
+            }
+            index++;
+        }
+        return index;
+    }
 
     public void setPlayerIcon(ImageView p) {
         playerIcon = p;
+    }
+    
+    public boolean hasVisited(String name) {
+        for(City city : visited) {
+            if(city.getName().equalsIgnoreCase(name))
+                return true;
+        }
+        
+        return false;
     }
 
     public ImageView getPlayerIcon() {
@@ -140,10 +160,5 @@ public class Player {
 
     public boolean isPlayer() {
         return !computer;
-    }
-
-    private String initIconURL() {
-        String color = flagURL.split("_")[0];
-        return "piece_" + color + ".png";
     }
 }

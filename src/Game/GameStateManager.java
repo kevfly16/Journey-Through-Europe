@@ -67,12 +67,17 @@ public class GameStateManager {
     }
 
     private void initPlayers() {
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+         // GET FLAGS
+        ArrayList<String> flags = props.getPropertyOptionsList(PropertyType.PLAYER_FLAG);
+        ArrayList<String> icons = props.getPropertyOptionsList(PropertyType.PLAYER_ICON);
         ArrayList<GridPane> playerSelectPanes = ui.getPlayerSelectPanes();
         ArrayList<Player> players = new ArrayList(playerSelectPanes.size());
         int index = 0;
         for (GridPane pane : playerSelectPanes) {
             String name = "";
-            String flag = ui.getFlagPaths().get(index);
+            String flag = flags.get(index);
+            String icon = icons.get(index);
             boolean computer = false;
             for (Node node : pane.getChildren()) {
                 if (node instanceof TextField) {
@@ -82,14 +87,14 @@ public class GameStateManager {
 
                 if (node instanceof RadioButton) {
                     RadioButton rb = (RadioButton) node;
-                    if (rb.getText().equals("Player")) {
+                    if (rb.getText().equals(props.getProperty(PropertyType.PLAYER_TEXT))) {
                         computer = !rb.isSelected();
                     } else {
                         computer = rb.isSelected();
                     }
                 }
             }
-            Player player = new Player(name, flag, computer);
+            Player player = new Player(name, flag, icon, computer);
             players.add(player);
             player.setCards(new ArrayList<>(GameData.generateCards()));
             player.setCurrentPosition(player.getStartingCity());
@@ -181,7 +186,8 @@ public class GameStateManager {
         label.setText(p.getName());
         ArrayList<Card> cards = p.getCards();
         for (Card card : cards) {
-            ui.getCardsPane().getChildren().add(card.getCardIcon());
+            if(!p.hasVisited(card.getCity()))
+                children.add(card.getCardIcon());
         }
         ui.loadPlayer(p.getName());
     }

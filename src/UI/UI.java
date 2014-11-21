@@ -10,6 +10,7 @@ import Game.Card;
 import Game.City;
 import Game.GameData;
 import Game.GameStateManager;
+import Game.GameStateManager.GameState;
 import Game.Player;
 import Main.Main.PropertyType;
 import java.io.IOException;
@@ -33,6 +34,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -56,7 +58,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.html.HTMLDocument;
@@ -368,7 +372,7 @@ public class UI {
     private void initInfoPane(PropertiesManager props) {
         infoPane = new VBox();
         Label playerTurn = new Label();
-        Label pointsLeft = new Label("Points Left: ");
+        Label pointsLeft = new Label(props.getProperty(PropertyType.POINTS_TEXT));
         die = new ImageView(loadImage(props.getPropertyOptionsList(PropertyType.DIE_IMG).get(5)));
         die.toBack();
         rollButton = initButton(props.getProperty(PropertyType.ROLL_BUTTON));
@@ -586,14 +590,14 @@ public class UI {
         card.toFront();
         cardsPane.getChildren().add(card);
         TranslateTransition translateTransition
-                = new TranslateTransition(Duration.millis(3000), card);
+                = new TranslateTransition(Duration.millis(1500), card);
         translateTransition.setFromX(paneWidth);
         translateTransition.setToX(0);
         translateTransition.setFromY(paneHeight * 0.3);
         translateTransition.setToY(cardYFactor * (size - cards.size()) + cardYConstant);
         translateTransition.setCycleCount(1);
         ScaleTransition scaleTransition
-                = new ScaleTransition(Duration.millis(1500), card);
+                = new ScaleTransition(Duration.millis(750), card);
         scaleTransition.setToX(2f);
         scaleTransition.setToY(2f);
         scaleTransition.setCycleCount(2);
@@ -611,16 +615,43 @@ public class UI {
 
         parallelTransition.play();
     }
+    
+    public void removeCard(ImageView card) {
+        TranslateTransition translateTransition
+                = new TranslateTransition(Duration.millis(1500), card);
+        translateTransition.setFromX(0);
+        translateTransition.setToX(paneWidth);
+        translateTransition.setFromY(0);
+        translateTransition.setToY(paneHeight * 0.3);
+        translateTransition.setCycleCount(1);
+        ScaleTransition scaleTransition
+                = new ScaleTransition(Duration.millis(750), card);
+        scaleTransition.setToX(2f);
+        scaleTransition.setToY(2f);
+        scaleTransition.setCycleCount(2);
+        scaleTransition.setAutoReverse(true);
+        parallelTransition = new ParallelTransition();
+        parallelTransition.getChildren().addAll(
+                translateTransition,
+                scaleTransition
+        );
+
+        parallelTransition.play();
+    }
 
     public void initPlayerIcons() {
         ArrayList<Player> players = GameData.getPlayers();
         int index = 0;
         for (Player player : players) {
             ImageView playerIcon = new ImageView(loadImage(player.getIconURL()));
+            ImageView flagIcon = new ImageView(loadImage(player.getFlagURL()));
             playerIcon.setLayoutX(player.getStartingCity().getPos().getX() - 50);
             playerIcon.setLayoutY(player.getStartingCity().getPos().getY() - 100);
+            flagIcon.setLayoutX(player.getStartingCity().getPos().getX() - 50);
+            flagIcon.setLayoutY(player.getStartingCity().getPos().getY() - 100);
             playerIcon.toFront();
             mapPane.getChildren().add(playerIcon);
+            mapPane.getChildren().add(flagIcon);
             player.setPlayerIcon(playerIcon);
             index++;
             setDragListener(playerIcon);
@@ -703,6 +734,13 @@ public class UI {
             playerIcon.setLayoutX(playerIcon.getLayoutX() + x);
             playerIcon.setLayoutY(playerIcon.getLayoutY() + y);
             gsm.decCurrentPoints();
+            int index = player.getCard(city);
+            if (index != GameData.getCardsDealt() && city != player.getStartingCity()) {
+                removeCard((ImageView)cardsPane.getChildren().get(index + 1));
+                player.addVisited(city);
+                loadWinGameDialog();
+                gsm.setGameState(GameState.GAME_NOT_STARTED);
+            }
         });
         translateTransition.play();
     }
@@ -799,5 +837,35 @@ public class UI {
         for (Line line : lines) {
             children.remove(line);
         }
+    }
+    
+    public void loadWinGameDialog() {
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        String youWon = props.getProperty(PropertyType.WIN_DISPLAY_TEXT);
+        Stage dialogStage = new Stage();
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        dialogStage.initOwner(primaryStage);
+        BorderPane exitPane = new BorderPane();
+        HBox optionPane = new HBox();
+        Button okButton = new Button("OK");
+        optionPane.setSpacing(10.0);
+        optionPane.getChildren().add(okButton);
+        Label exitLabel = new Label(youWon);
+        exitPane.setCenter(exitLabel);
+        GridPane bottomPane = new GridPane();
+        bottomPane.add(optionPane, 0, 2);
+        bottomPane.setAlignment(Pos.CENTER);
+        exitPane.setBottom(bottomPane);
+        Scene scene = new Scene(exitPane, 300, 100);
+        dialogStage.setScene(scene);
+        dialogStage.show();
+        // WHAT'S THE USER'S DECISION?
+        okButton.setOnAction(e -> {
+            System.exit(0);
+        });
+        
+        dialogStage.setOnCloseRequest((WindowEvent e) -> {
+            System.exit(0);
+        });
     }
 }

@@ -33,6 +33,22 @@
         <property_options name="LANGUAGE_FILE">
             <option>EN.xml</option>
         </property_options>
+        <property_options name="PLAYER_ICON">
+            <option>piece_black.png</option>
+            <option>piece_yellow.png</option>
+            <option>piece_blue.png</option>
+            <option>piece_red.png</option>
+            <option>piece_green.png</option>
+            <option>piece_white.png</option>
+        </property_options>
+        <property_options name="PLAYER_FLAG">
+            <option>flag_black.png</option>
+            <option>flag_yellow.png</option>
+            <option>flag_blue.png</option>
+            <option>flag_red.png</option>
+            <option>flag_green.png</option>
+            <option>flag_white.png</option>
+        </property_options>
         <property_options name="FLAG">
             <option>black_flag.png</option>
             <option>yellow_flag.png</option>
