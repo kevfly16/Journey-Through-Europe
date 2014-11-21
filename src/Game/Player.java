@@ -149,6 +149,17 @@ public class Player {
         
         return false;
     }
+    
+    public void removeCard(City city) {
+        int index = 0;
+        for(Card card : cards) {
+            if(card.getCity().equalsIgnoreCase(city.getName())) {
+                cards.remove(index);  
+                return;
+            }
+            index++;
+        }
+    }
 
     public ImageView getPlayerIcon() {
         return playerIcon;
@@ -160,5 +171,9 @@ public class Player {
 
     public boolean isPlayer() {
         return !computer;
+    }
+    
+    public void setPreviousPosition(City city) {
+        previousPosition = city;
     }
 }

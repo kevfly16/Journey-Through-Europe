@@ -42,6 +42,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -110,7 +111,6 @@ public class UI {
     private Pane previousScreenPane;
     private boolean dragging;
     private Label cityName;
-    private ParallelTransition parallelTransition;
     private boolean animRunning;
     private Pane cardsPane;
     private VBox infoPane;
@@ -602,7 +602,7 @@ public class UI {
         scaleTransition.setToY(2f);
         scaleTransition.setCycleCount(2);
         scaleTransition.setAutoReverse(true);
-        parallelTransition = new ParallelTransition();
+        ParallelTransition parallelTransition = new ParallelTransition();
         parallelTransition.getChildren().addAll(
                 translateTransition,
                 scaleTransition
@@ -616,7 +616,7 @@ public class UI {
         parallelTransition.play();
     }
     
-    public void removeCard(ImageView card) {
+    public void removeCard(City city, ImageView card) {
         TranslateTransition translateTransition
                 = new TranslateTransition(Duration.millis(1500), card);
         translateTransition.setFromX(0);
@@ -630,12 +630,16 @@ public class UI {
         scaleTransition.setToY(2f);
         scaleTransition.setCycleCount(2);
         scaleTransition.setAutoReverse(true);
-        parallelTransition = new ParallelTransition();
+        ParallelTransition parallelTransition = new ParallelTransition();
         parallelTransition.getChildren().addAll(
                 translateTransition,
                 scaleTransition
         );
-
+        parallelTransition.setOnFinished((ActionEvent e) -> {
+            cardsPane.getChildren().remove(card);
+            gsm.getGameData().getCurrentPlayer().addVisited(city);
+            gsm.nextMove();
+        });
         parallelTransition.play();
     }
 
@@ -668,15 +672,15 @@ public class UI {
                 double y = e.getY();
                 TranslateTransition translateTransition
                         = new TranslateTransition(Duration.millis(3), playerIcon);
-                translateTransition.setToX(x);
-                translateTransition.setToY(y);
+                translateTransition.setToX(x - 50);
+                translateTransition.setToY(y - 50);
                 translateTransition.setCycleCount(1);
                 translateTransition.setInterpolator(Interpolator.LINEAR);
                 translateTransition.setOnFinished((ActionEvent event) -> {
                     playerIcon.setTranslateX(0);
                     playerIcon.setTranslateY(0);
-                    playerIcon.setLayoutX(playerIcon.getLayoutX() + x);
-                    playerIcon.setLayoutY(playerIcon.getLayoutY() + y);
+                    playerIcon.setLayoutX(playerIcon.getLayoutX() + x - 50);
+                    playerIcon.setLayoutY(playerIcon.getLayoutY() + y - 50);
                 });
                 translateTransition.play();
             }
@@ -685,7 +689,7 @@ public class UI {
         playerIcon.setOnMouseReleased((MouseEvent e) -> {
             if (isCurrentPlayer(playerIcon) && gsm.canMove()) {
                 gamePane.setPannable(true);
-                Point2D point = new Point2D(playerIcon.getLayoutX(), playerIcon.getLayoutY());
+                Point2D point = new Point2D(playerIcon.getLayoutX() + 50, playerIcon.getLayoutY() + 50);
                 Point2D origLoc = getCurrentPlayerPosition(playerIcon);
                 playerIcon.setLayoutX(origLoc.getX() - 50);
                 playerIcon.setLayoutY(origLoc.getY() - 100);
@@ -735,11 +739,9 @@ public class UI {
             playerIcon.setLayoutY(playerIcon.getLayoutY() + y);
             gsm.decCurrentPoints();
             int index = player.getCard(city);
-            if (index != GameData.getCardsDealt() && city != player.getStartingCity()) {
-                removeCard((ImageView)cardsPane.getChildren().get(index + 1));
-                player.addVisited(city);
-                loadWinGameDialog();
-                gsm.setGameState(GameState.GAME_NOT_STARTED);
+            if (index != player.getCards().size() && city != player.getStartingCity()) {
+                player.removeCard(city);
+                removeCard(city, (ImageView)cardsPane.getChildren().get(index + 1));
             }
         });
         translateTransition.play();
@@ -837,35 +839,5 @@ public class UI {
         for (Line line : lines) {
             children.remove(line);
         }
-    }
-    
-    public void loadWinGameDialog() {
-        PropertiesManager props = PropertiesManager.getPropertiesManager();
-        String youWon = props.getProperty(PropertyType.WIN_DISPLAY_TEXT);
-        Stage dialogStage = new Stage();
-        dialogStage.initModality(Modality.WINDOW_MODAL);
-        dialogStage.initOwner(primaryStage);
-        BorderPane exitPane = new BorderPane();
-        HBox optionPane = new HBox();
-        Button okButton = new Button("OK");
-        optionPane.setSpacing(10.0);
-        optionPane.getChildren().add(okButton);
-        Label exitLabel = new Label(youWon);
-        exitPane.setCenter(exitLabel);
-        GridPane bottomPane = new GridPane();
-        bottomPane.add(optionPane, 0, 2);
-        bottomPane.setAlignment(Pos.CENTER);
-        exitPane.setBottom(bottomPane);
-        Scene scene = new Scene(exitPane, 300, 100);
-        dialogStage.setScene(scene);
-        dialogStage.show();
-        // WHAT'S THE USER'S DECISION?
-        okButton.setOnAction(e -> {
-            System.exit(0);
-        });
-        
-        dialogStage.setOnCloseRequest((WindowEvent e) -> {
-            System.exit(0);
-        });
     }
 }

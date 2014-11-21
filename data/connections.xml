@@ -59,7 +59,7 @@
         <name>OULU</name>
         <land>
             <city>VAASA</city>
-            <city>TAMPERE</city>
+            <city>ROVANIEMI</city>
         </land>
         <sea>
         </sea>
@@ -280,6 +280,7 @@
         <land>
             <city>LEEDS</city>
             <city>BIRMINGHAM</city>
+            <city>GLASGOW</city>
         </land>
         <sea>
             <city>DUBLIN</city>

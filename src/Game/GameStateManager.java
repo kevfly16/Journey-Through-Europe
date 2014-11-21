@@ -189,6 +189,7 @@ public class GameStateManager {
             if(!p.hasVisited(card.getCity()))
                 children.add(card.getCardIcon());
         }
+        p.setPreviousPosition(null);
         ui.loadPlayer(p.getName());
     }
 
