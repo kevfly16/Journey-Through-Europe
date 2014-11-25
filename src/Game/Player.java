@@ -26,6 +26,7 @@ public class Player {
     private int roll;
     private final boolean computer;
     private City previousPosition;
+    public boolean turnStarted;
 
     public Player(String n, String f, String i, boolean c) {
         name = n;
@@ -39,6 +40,7 @@ public class Player {
         iconURL = i;
         computer = c;
         previousPosition = null;
+        turnStarted = false;
     }
 
     public String getName() {
@@ -175,5 +177,13 @@ public class Player {
     
     public void setPreviousPosition(City city) {
         previousPosition = city;
+    }
+    
+    public void setTurnStarted(boolean ts) {
+        turnStarted = ts;
+    }
+    
+    public boolean isTurnStarted() {
+        return turnStarted;
     }
 }

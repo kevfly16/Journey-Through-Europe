@@ -10,6 +10,7 @@ import Game.GameData;
 import Game.Player;
 import Main.Main;
 import UI.UI.UIState;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import properties_manager.PropertiesManager;
 
@@ -38,6 +39,10 @@ public class JTEEventHandler {
         Player player = ui.getGSM().getGameData().getCurrentPlayer();
         if(!ui.getGSM().move(player, city)) {
             System.out.println("Invalid Move!");
+        }
+        ArrayList<City> path = GameData.getMap().getPath(player.getCurrentPosition(), GameData.getMap().getCity(player.getCards().get(1).getCity().toUpperCase()));
+        for(City c : path) {
+            System.out.println(c.getName() + ",");
         }
     }
     

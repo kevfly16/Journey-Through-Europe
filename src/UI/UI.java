@@ -10,7 +10,6 @@ import Game.Card;
 import Game.City;
 import Game.GameData;
 import Game.GameStateManager;
-import Game.GameStateManager.GameState;
 import Game.Player;
 import Main.Main.PropertyType;
 import java.io.IOException;
@@ -31,8 +30,6 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
-import javafx.scene.ImageCursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -42,7 +39,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -61,7 +57,6 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.html.HTMLDocument;
@@ -92,7 +87,7 @@ public class UI {
     private BorderPane gameplayScreenPane;
     private Pane aboutScreenPane;
     private Pane moveHistoryScreenPane;
-    private Pane flightPlanPane;
+    private ScrollPane flightPlanPane;
     private int paneWidth;
     private int paneHeight;
     private Button playButton;
@@ -110,7 +105,6 @@ public class UI {
     private WebEngine webEngine;
     private Pane previousScreenPane;
     private boolean dragging;
-    private Label cityName;
     private boolean animRunning;
     private Pane cardsPane;
     private VBox infoPane;
@@ -326,9 +320,8 @@ public class UI {
             changeWorkspace(UIState.HISTORY_SCREEN_STATE);
         });
 
-        cityName = new Label();
         HBox top = new HBox(2);
-        top.getChildren().addAll(about, moveHistoryButton, cityName);
+        top.getChildren().addAll(about, moveHistoryButton);
 
         cardsPane = new Pane();
         Label label = new Label();
@@ -356,6 +349,7 @@ public class UI {
         mapImage.setOnMouseDragged((MouseEvent e) -> {
             dragging = true;
         });
+        
         mapImage.setOnMouseClicked((MouseEvent e) -> {
             currentPos = new Point2D(e.getX(), e.getY());
             if (!dragging) {
@@ -380,9 +374,54 @@ public class UI {
         rollButton.setOnAction((ActionEvent e) -> {
             eventHandler.rollDie();
         });
+        initFlightPlanPane();
         flightButton = initButton(props.getProperty(PropertyType.FLIGHT_BUTTON));
+        flightButton.setOnAction((ActionEvent e) -> {
+            if(gsm.getGameData().getCurrentPlayer().getCurrentPosition().hasPlane())
+                showFlightPane();
+            else
+                showFlightPane();
+        });
         flightButton.toBack();
-        infoPane.getChildren().addAll(playerTurn, pointsLeft, die, rollButton, flightButton);
+        Button endTurn = initButton(props.getProperty(PropertyType.END_BUTTON));
+        endTurn.setOnAction((ActionEvent e) -> {
+            gsm.nextMove();
+        });
+        infoPane.getChildren().addAll(playerTurn, pointsLeft, die, rollButton, flightButton, endTurn);
+    }
+    
+    private void initFlightPlanPane() {
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        Pane flightMapPane = new Pane();
+        ImageView flightMapImage = new ImageView(loadImage(props.getProperty(PropertyType.FLIGHT_IMG)));
+        flightMapPane.getChildren().setAll(flightMapImage);
+        // wrap the scene contents in a pannable scroll pane.
+        flightPlanPane = createScrollPane(flightMapPane);
+        // center the scroll contents.
+        flightPlanPane.setHvalue(flightPlanPane.getHmin() + (flightPlanPane.getHmax() - flightPlanPane.getHmin()) / 2);
+        flightPlanPane.setVvalue(flightPlanPane.getVmin() + (flightPlanPane.getVmax() - flightPlanPane.getVmin()) / 2);
+        flightMapImage.setOnMouseDragged((MouseEvent e) -> {
+            dragging = true;
+        });
+        
+        flightMapImage.setOnMouseClicked((MouseEvent e) -> {
+            currentPos = new Point2D(e.getX(), e.getY());
+            if (!dragging) {
+                System.out.println(e.getX() + " " + e.getY());
+            }
+            dragging = false;
+        });
+    }
+    
+    private void showFlightPane() {
+        // FIRST MAKE SURE THE USER REALLY WANTS TO EXIT
+        Stage dialogStage = new Stage();
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        dialogStage.initOwner(primaryStage);
+        GridPane bottomPane = new GridPane();
+        Scene scene = new Scene(flightPlanPane, 1100, 800);
+        dialogStage.setScene(scene);
+        dialogStage.show();
     }
 
     private void initAboutScreenPane() {
@@ -616,7 +655,7 @@ public class UI {
         parallelTransition.play();
     }
     
-    public void removeCard(City city, ImageView card) {
+    public void removeCard(Player player, City city, ImageView card) {
         TranslateTransition translateTransition
                 = new TranslateTransition(Duration.millis(1500), card);
         translateTransition.setFromX(0);
@@ -638,7 +677,8 @@ public class UI {
         parallelTransition.setOnFinished((ActionEvent e) -> {
             cardsPane.getChildren().remove(card);
             gsm.getGameData().getCurrentPlayer().addVisited(city);
-            gsm.nextMove();
+            if(gsm.getGameData().getCurrentPlayer() == player)
+                gsm.nextMove();
         });
         parallelTransition.play();
     }
@@ -741,7 +781,7 @@ public class UI {
             int index = player.getCard(city);
             if (index != player.getCards().size() && city != player.getStartingCity()) {
                 player.removeCard(city);
-                removeCard(city, (ImageView)cardsPane.getChildren().get(index + 1));
+                removeCard(player, city, (ImageView)cardsPane.getChildren().get(index + 1));
             }
         });
         translateTransition.play();
@@ -837,7 +877,11 @@ public class UI {
         }
         ObservableList children = mapPane.getChildren();
         for (Line line : lines) {
-            children.remove(line);
+            try {
+                children.remove(line);
+            } catch(Exception e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
 }

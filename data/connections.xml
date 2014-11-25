@@ -14,7 +14,7 @@
         </land>
         <sea>
             <city>REYKJAVIK</city>
-            <city>SHETLAND_ISLANDS</city>
+            <city>SHETLAND ISLANDS</city>
             <city>MALMO</city>
         </sea>
     </cityConnections>
@@ -365,7 +365,7 @@
             <city>GLASGOW</city>
         </land>
         <sea>
-            <city>SHETLAND_ISLANDS</city>
+            <city>SHETLAND ISLANDS</city>
         </sea>
     </cityConnections>
     <cityConnections>
@@ -482,7 +482,7 @@
         </sea>
     </cityConnections>
     <cityConnections>
-        <name>SHETLAND_ISLANDS</name>
+        <name>SHETLAND ISLANDS</name>
         <land>
         </land>
         <sea>
@@ -648,7 +648,7 @@
         <land>
             <city>BORDEAUX</city>
             <city>TOULOUSE</city>
-            <city>SAN_SEBASTIAN</city>
+            <city>SAN SEBASTIAN</city>
         </land>
         <sea>
         </sea>
@@ -696,7 +696,7 @@
         <name>VALLADOLID</name>
         <land>
             <city>SANTANDER</city>
-            <city>LA_CORUNA</city>
+            <city>LA CORUNA</city>
             <city>MADRID</city>
         </land>
         <sea>
@@ -741,7 +741,7 @@
         </sea>
     </cityConnections>
     <cityConnections>
-        <name>SAN_SEBASTIAN</name>
+        <name>SAN SEBASTIAN</name>
         <land>
             <city>BIARRITZ</city>
             <city>SANTANDER</city>
@@ -792,14 +792,14 @@
             <city>ALICANTE</city>
         </land>
         <sea>
-            <city>PALMA_MALLORCA</city>
+            <city>PALMA MALLORCA</city>
             <city>MALAGA</city>
         </sea>
     </cityConnections>
     <cityConnections>
         <name>PORTO</name>
         <land>
-            <city>LA_CORUNA</city>
+            <city>LA CORUNA</city>
             <city>COIMBRA</city>
         </land>
         <sea>
@@ -832,15 +832,15 @@
     <cityConnections>
         <name>SANTANDER</name>
         <land>
-            <city>SAN_SEBASTIAN</city>
+            <city>SAN SEBASTIAN</city>
             <city>VALLADOLID</city>
-            <city>LA_CORUNA</city>
+            <city>LA CORUNA</city>
         </land>
         <sea>
         </sea>
     </cityConnections>
     <cityConnections>
-        <name>LA_CORUNA</name>
+        <name>LA CORUNA</name>
         <land>
             <city>SANTANDER</city>
             <city>VALLADOLID</city>
@@ -880,7 +880,7 @@
     <cityConnections>
         <name>ZARAGOZA</name>
         <land>
-            <city>SAN_SEBASTIAN</city>
+            <city>SAN SEBASTIAN</city>
             <city>BARCELONA</city>
             <city>MADRID</city>
         </land>
@@ -970,7 +970,7 @@
         </sea>
     </cityConnections>
     <cityConnections>
-        <name>PALMA_MALLORCA</name>
+        <name>PALMA MALLORCA</name>
         <land>
         </land>
         <sea>
@@ -1201,7 +1201,7 @@
         <sea>
             <city>MARSEILLE</city>
             <city>AJACCIO</city>
-            <city>PALMA_MALLORCA</city>
+            <city>PALMA MALLORCA</city>
         </sea>
     </cityConnections>
     <cityConnections>
@@ -1486,7 +1486,7 @@
         </sea>
     </cityConnections>
     <cityConnections>
-        <name>LE_HAVRE</name>
+        <name>LE HAVRE</name>
         <land>
             <city>CALAIS</city>
             <city>PARIS</city>
@@ -1531,7 +1531,7 @@
         <name>CALAIS</name>
         <land>
             <city>DOVER</city>
-            <city>LE_HAVRE</city>
+            <city>LE HAVRE</city>
             <city>PARIS</city>
             <city>LILLE</city>
         </land>
@@ -1603,7 +1603,7 @@
             <city>LONDON</city>
         </land>
         <sea>
-            <city>LE_HAVRE</city>
+            <city>LE HAVRE</city>
             <city>PORTO</city>
         </sea>
     </cityConnections>
@@ -1710,7 +1710,7 @@
     <cityConnections>
         <name>PARIS</name>
         <land>
-            <city>LE_HAVRE</city>
+            <city>LE HAVRE</city>
             <city>RENNES</city>
             <city>ORLEANS</city>
             <city>CLERMONT-FERRAND</city>
@@ -1865,7 +1865,7 @@
             <city>RENNES</city>
         </land>
         <sea>
-            <city>LE_HAVRE</city>
+            <city>LE HAVRE</city>
             <city>BORDEAUX</city>
         </sea>
     </cityConnections>

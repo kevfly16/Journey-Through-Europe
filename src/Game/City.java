@@ -15,18 +15,23 @@ import javafx.geometry.Point2D;
  */
 public class City implements Comparable {
 
-    private ArrayList<City> cities;
+    private final ArrayList<City> cities;
     private HashMap<City, Integer> weights;
     private final String name;
     private Point2D pos;
     private static double radius;
     private boolean ferry;
     private boolean plane;
-    private int minDistance;
+    private double minDistance;
     private City previousCity;
+    private final ArrayList<City> seaConnections;
+    private final ArrayList<City> landConnections;
 
     public City(String n) {
         name = n;
+        cities = new ArrayList();
+        seaConnections = new ArrayList();
+        landConnections = new ArrayList();
     }
 
     public String getName() {
@@ -40,9 +45,17 @@ public class City implements Comparable {
     public ArrayList<City> getCities() {
         return cities;
     }
-
-    public void setCities(ArrayList<City> c) {
-        cities = c;
+    
+    public void addCity(boolean isLand, City city) {
+        if(isLand)
+            landConnections.add(city);
+        else
+            seaConnections.add(city);
+        cities.add(city);
+    }
+    
+    public boolean isSeaConnection(City city) {
+        return seaConnections.contains(city);
     }
 
     public City getCity(City city) {
@@ -57,7 +70,7 @@ public class City implements Comparable {
         ferry = f;
     }
 
-    public boolean getPlane() {
+    public boolean hasPlane() {
         return plane;
     }
 
@@ -101,11 +114,11 @@ public class City implements Comparable {
         return point.distance(pos);
     }
     
-    public void setMinDistance(int min) {
+    public void setMinDistance(double min) {
         minDistance = min;
     }
     
-    public int getMinDistance() {
+    public double getMinDistance() {
         return minDistance;
     }
     

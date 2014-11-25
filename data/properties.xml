@@ -17,6 +17,7 @@
         <property name="CARDS_FILE"                 value="cards.csv"></property>
         <property name="CONNECTIONS_FILE"           value="connections.xml"></property>
         <property name="MAP_IMG"                    value="gameplay.jpg"></property>
+        <property name="FLIGHT_IMG"                 value="flightPlan.jpg"></property>
         <property name="DATA_PATH"                  value="./data/"></property>
         <property name="IMG_PATH"                   value="./images/"></property>
         <property name="MUS_PATH"                   value="./music/"></property>

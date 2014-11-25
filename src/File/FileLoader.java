@@ -12,7 +12,6 @@ import Main.Main.PropertyType;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -142,15 +141,13 @@ public class FileLoader {
                 City city = map.getCity(name.replace("_", " "));
                 if(city == null)
                     continue;
-                ArrayList<City> cities = new ArrayList<>();
                 for(int j = 0; j < lc.getLength(); j++) {
-                    cities.add(map.getCity(lc.item(j).getTextContent()));
+                    city.addCity(true, map.getCity(lc.item(j).getTextContent()));
                 }
                 
                 for(int j = 0; j < sc.getLength(); j++) {
-                    cities.add(map.getCity(sc.item(j).getTextContent()));
+                    city.addCity(false, map.getCity(sc.item(j).getTextContent()));
                 }
-                city.setCities(cities);
             }
         }
     }

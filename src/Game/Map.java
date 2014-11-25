@@ -8,6 +8,7 @@ package Game;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.PriorityQueue;
 import javafx.geometry.Point2D;
 
 /**
@@ -37,44 +38,40 @@ public class Map {
             city.setMinDistance(Integer.MAX_VALUE);
             city.setPreviousCity(null);
         }
-        
-        City city = src;
-        City next = null;
-        ArrayList<City> citySet = new ArrayList();
-        citySet.add(src);
-        city.setMinDistance(0);
-        while (citySet.size() < locations.size()) {
-            int min = Integer.MAX_VALUE;
-            ArrayList<City> nodes = city.getCities();
-            for (City node : nodes) {
-                int distance = src.getMinDistance() + city.getWeight(node);
-                if (distance < node.getMinDistance()) {
-                    node.setMinDistance(distance);
-                    node.setPreviousCity(city);
-                }
-                if (node.getMinDistance() < min) {
-                    min = node.getMinDistance();
-                    next = node;
+
+        src.setMinDistance(0);
+        PriorityQueue<City> cityQueue = new PriorityQueue<City>();
+        cityQueue.add(src);
+
+        while (!cityQueue.isEmpty()) {
+            City city = cityQueue.poll();
+
+            // Visit each edge exiting u
+            for (City c : city.getCities()) {
+                double weight = 1;
+                double distance = city.getMinDistance() + weight;
+                if (distance < c.getMinDistance()) {
+                    cityQueue.remove(c);
+                    c.setMinDistance(distance);
+                    c.setPreviousCity(city);
+                    cityQueue.add(c);
                 }
             }
-            
-            citySet.add(city = next);
         }
-        
         ArrayList<City> path = new ArrayList();
-        city = dest;
-        while(city != src) {
+        City city = dest;
+        while (city != src) {
             path.add(0, city);
             city = city.getPreviousCity();
         }
-        
+
         return path;
     }
 
     public void addCity(City city) {
         cities.put(city.getName(), city);
     }
-    
+
     public City getCity(String city) {
         return cities.get(city);
     }

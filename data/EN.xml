@@ -13,6 +13,7 @@
         <property name="ROLL_BUTTON"            value="roll.png"></property>
         <property name="FLIGHT_BUTTON"          value="flight.png"></property>
         <property name="GO_BUTTON"              value="go.png"></property>
+        <property name="END_BUTTON"             value="end.png"></property>
         <property name="LOGO_IMG"               value="logo.jpg"></property>
 
         

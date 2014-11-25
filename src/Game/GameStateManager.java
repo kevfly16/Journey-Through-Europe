@@ -120,10 +120,16 @@ public class GameStateManager {
         if (!canMove(player)) {
             return false;
         }
-        if (!GameData.getMap().getCity(player.getCurrentPosition().getName()).hasCity(dest)) {
+        if(player.getCurrentPosition() == dest) {
             return false;
         }
+        if (!GameData.getMap().getCity(player.getCurrentPosition().getName()).hasCity(dest)) {
+//            return false;
+        }
         if(player.getPreviousPosition() == dest) {
+            return false;
+        }
+        if(player.getCurrentPosition().isSeaConnection(dest) && !player.isTurnStarted()) {
             return false;
         }
         double x = dest.getPos().getX() - player.getCurrentPosition().getPos().getX();
@@ -190,7 +196,7 @@ public class GameStateManager {
                 children.add(card.getCardIcon());
         }
         p.setPreviousPosition(null);
+        p.setTurnStarted(true);
         ui.loadPlayer(p.getName());
     }
-
 }
