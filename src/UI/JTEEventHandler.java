@@ -41,6 +41,8 @@ public class JTEEventHandler {
         if (!ui.getGSM().move(player, city)) {
             if(player.isComputer()) {
                 ui.getGSM().nextMove();
+            } else {
+                System.out.println("Invalid Move!");
             }
         }
     }

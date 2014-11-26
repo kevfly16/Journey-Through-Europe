@@ -19,10 +19,12 @@ public class Map {
 
     private HashMap<String, City> cities;
     private ArrayList<City> locations;
+    private ArrayList<City> flights;
 
     public Map() {
         cities = new HashMap();
         locations = new ArrayList();
+        flights = new ArrayList();
     }
 
     public ArrayList<City> getCities() {
@@ -86,13 +88,50 @@ public class Map {
     public void setLocations(ArrayList<City> l) {
         locations = l;
     }
-
-    public void sort() {
-        Collections.sort(locations);
+    
+    public void addFlight(City city) {
+        flights.add(city);
+    }
+    
+    public ArrayList<City> getFlights() {
+        return flights;
+    }
+    
+    public City getFlight(String name) {
+        for(City city : flights) {
+            if(city.getName().equalsIgnoreCase(name))
+                return city;
+        }
+        
+        return null;
+    }
+    
+    public void setFlights(ArrayList<City> l) {
+        flights = l;
+    }
+    
+    public boolean hasFlight(City src, City dest) {
+        boolean hasSrc = false;
+        boolean hasDest = false;
+        for(City city : flights) {
+            if(city.getName().equalsIgnoreCase(src.getName())) {
+                hasSrc = true;
+            }
+            
+            if(city.getName().equalsIgnoreCase(dest.getName())) {
+                hasDest = true;
+            }
+        }
+        
+        return hasSrc && hasDest;
     }
 
-    public City findCity(Point2D point) {
-        int minIndex = binSearch(point.getX() - 20);
+    public void sort(ArrayList<City> list) {
+        Collections.sort(list);
+    }
+
+    public City findCity(Point2D point, ArrayList<City> list) {
+        int minIndex = binSearch(point.getX() - 20, list);
         int min = (int) point.getX() - 20;
         int max = (int) point.getX() + 20;
 
@@ -100,12 +139,12 @@ public class Map {
             return null;
         }
 
-        while (locations.get(minIndex).getPos().getX() > min && minIndex != 0) {
+        while (list.get(minIndex).getPos().getX() > min && minIndex != 0) {
             minIndex--;
         }
 
-        for (int i = minIndex; i < locations.size() && locations.get(i).getPos().getX() < max; i++) {
-            City city = locations.get(i);
+        for (int i = minIndex; i < list.size() && list.get(i).getPos().getX() < max; i++) {
+            City city = list.get(i);
             if (city.computeDistance(point) < City.getRadius()) {
                 return city;
             }
@@ -114,13 +153,13 @@ public class Map {
         return null;
     }
 
-    private int binSearch(double val) {
+    private int binSearch(double val, ArrayList<City> list) {
         int low = 0;
-        int high = locations.size();
+        int high = list.size();
         int mid = -1;
         while (low < high) {
             mid = (low + high) / 2;
-            int x = (int) locations.get(mid).getPos().getX();
+            int x = (int) list.get(mid).getPos().getX();
             if (x > val - 10 && x < val + 10) {
                 break;
             }

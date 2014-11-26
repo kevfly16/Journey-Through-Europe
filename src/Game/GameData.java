@@ -116,7 +116,8 @@ public class GameData {
             PropertiesManager props = PropertiesManager.getPropertiesManager();
             City.setRadius(Double.parseDouble(props.getProperty(PropertyType.RADIUS)));
             FileLoader.loadMap(map);
-            map.sort();
+            map.sort(map.getLocations());
+            map.sort(map.getFlights());
         } catch (IOException ex) {
             UI.getErrorHandler().processError(PropertyType.INVALID_DOC_ERROR_TEXT);
         }

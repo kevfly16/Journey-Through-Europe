@@ -69,6 +69,7 @@ public class FileLoader {
 
     public static void loadMap(Map map) throws IOException {
         loadCityPoints(map);
+        loadFlightPoints(map);
         loadConnections(map);
     }
 
@@ -87,6 +88,24 @@ public class FileLoader {
             c.setPos(Double.parseDouble(city[3]), Double.parseDouble(city[4]));
             map.addCity(c);
             map.addLocation(c);
+        }
+    }
+
+    private static void loadFlightPoints(Map map) throws IOException {
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        String dataPath = props.getProperty(PropertyType.DATA_PATH);
+        String flightsFile = props.getProperty(PropertyType.FLIGHTS_FILE);
+        String path = dataPath + flightsFile;
+        BufferedReader br = new BufferedReader(new FileReader(path));
+        String line;
+        String seperator = "\t";
+        while ((line = br.readLine()) != null) {
+            // use space as separator
+            String[] city = line.split(seperator);
+            City c = new City(city[0], Integer.parseInt(city[3]));
+            map.getCity(city[0]).setPlane(true);
+            c.setPos(Double.parseDouble(city[1]), Double.parseDouble(city[2]));
+            map.addFlight(c);
         }
     }
 
@@ -132,20 +151,21 @@ public class FileLoader {
         NodeList nl = docEle.getElementsByTagName("cityConnections");
         if (nl != null && nl.getLength() > 0) {
             for (int i = 0; i < nl.getLength(); i++) {
-                Element ele = (Element)nl.item(i);
+                Element ele = (Element) nl.item(i);
                 String name = ele.getElementsByTagName("name").item(0).getTextContent();
-                Element landConnections = (Element)ele.getElementsByTagName("land").item(0);
-                Element seaConnections = (Element)ele.getElementsByTagName("sea").item(0);
+                Element landConnections = (Element) ele.getElementsByTagName("land").item(0);
+                Element seaConnections = (Element) ele.getElementsByTagName("sea").item(0);
                 NodeList lc = landConnections.getElementsByTagName("city");
                 NodeList sc = seaConnections.getElementsByTagName("city");
                 City city = map.getCity(name.replace("_", " "));
-                if(city == null)
+                if (city == null) {
                     continue;
-                for(int j = 0; j < lc.getLength(); j++) {
+                }
+                for (int j = 0; j < lc.getLength(); j++) {
                     city.addCity(true, map.getCity(lc.item(j).getTextContent()));
                 }
-                
-                for(int j = 0; j < sc.getLength(); j++) {
+
+                for (int j = 0; j < sc.getLength(); j++) {
                     city.addCity(false, map.getCity(sc.item(j).getTextContent()));
                 }
             }

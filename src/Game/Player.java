@@ -29,6 +29,8 @@ public class Player {
     private City previousPosition;
     private boolean turnStarted;
     private LinkedList<City> path;
+    private boolean flied;
+    private int flightPoints;
 
     public Player(String n, String f, String i, boolean c) {
         name = n;
@@ -43,6 +45,7 @@ public class Player {
         computer = c;
         previousPosition = null;
         turnStarted = false;
+        flied = false;
     }
 
     public String getName() {
@@ -198,5 +201,40 @@ public class Player {
         }
         
         path = new LinkedList<>(GameData.getMap().getPath(currentPosition, getStartingCity()));
+    }
+    
+    public void setFlied(boolean f) {
+        flied = f;
+    }
+    
+    public boolean hasFlied() {
+        return flied;
+    }
+    
+    public int getFlightPoints() {
+        int tmp = flightPoints;
+        flightPoints = 0;
+        return tmp;
+    }
+    
+    public boolean hasPointsToFly(City dest) {
+        City src = currentPosition;
+        src = GameData.getMap().getFlight(src.getName());
+        dest = GameData.getMap().getFlight(dest.getName());
+        if(Math.abs(src.getQuarter() - dest.getQuarter()) == 0) { 
+            if(currentPoints >= 2) {
+                flightPoints = 2;
+                return true;
+            }
+            return false;
+        } else if(Math.abs(src.getQuarter() - dest.getQuarter()) == 1 || Math.abs(src.getQuarter() - dest.getQuarter()) == 3) {
+            if(currentPoints >= 4) {
+                flightPoints = 4;
+                return true;
+            }
+            return false;
+        }
+        
+        return false;
     }
 }

@@ -25,6 +25,7 @@
         <property name="WIN_DISPLAY_TEXT"       value="Won!"></property>
         <property name="LOSE_DISPLAY_TEXT"      value="You Lost!"></property>
         <property name="EXIT_REQUEST_TEXT"      value="Are you sure you wish to Quit?"></property>
+        <property name="FLIGHT_DISPLAY_TEXT"    value="Are you sure you wish to fly to "></property>
         <property name="YES_TEXT"               value="Yes"></property>
         <property name="OK_TEXT"                value="Ok"></property>
         <property name="NO_TEXT"                value="No"></property>

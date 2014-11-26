@@ -59,6 +59,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.html.HTMLDocument;
@@ -123,6 +124,8 @@ public class UI {
     private final String pointsLost;
     private final String rollAgain;
     private ArrayList<Line> lines;
+    private Stage flightDialogStage;
+    private Scene flightDialogScene;
 
     /**
      * The UIState represents the four screen states that are possible for the
@@ -154,6 +157,7 @@ public class UI {
         currentPos = new Point2D(0, 0);
         pointsLost = props.getProperty(PropertyType.POINTS_TEXT);
         rollAgain = props.getProperty(PropertyType.ROLL_AGAIN_TEXT);
+        flightDialogScene = null;
     }
 
     private void initMainPane() {
@@ -356,7 +360,7 @@ public class UI {
             currentPos = new Point2D(e.getX(), e.getY());
             if (!dragging && gsm.isPlayerTurn()) {
                 Point2D point = new Point2D(e.getX(), e.getY());
-                City city = GameData.getMap().findCity(point);
+                City city = GameData.getMap().findCity(point, GameData.getMap().getLocations());
                 if (city != null) {
                     eventHandler.movePlayer(city);
                 }
@@ -379,16 +383,19 @@ public class UI {
         initFlightPlanPane();
         flightButton = initButton(props.getProperty(PropertyType.FLIGHT_BUTTON));
         flightButton.setOnAction((ActionEvent e) -> {
-            if (gsm.getGameData().getCurrentPlayer().getCurrentPosition().hasPlane()) {
-                showFlightPane();
-            } else {
+            if (gsm.getGameData().getCurrentPlayer().getCurrentPosition().hasPlane() 
+                    && gsm.isPlayerTurn() && !gsm.getGameData().getCurrentPlayer().hasFlied()) {
                 showFlightPane();
             }
         });
         flightButton.toBack();
         Button endTurn = initButton(props.getProperty(PropertyType.END_BUTTON));
         endTurn.setOnAction((ActionEvent e) -> {
-            gsm.nextMove();
+            Player player = gsm.getGameData().getCurrentPlayer();
+            if(player.getCurrentPosition().hasSeaConnections() || !player.getCurrentPosition().hasConnections())
+                gsm.nextMove();
+            else
+                System.out.println("Cannot end move!");
         });
         infoPane.getChildren().addAll(playerTurn, pointsLeft, die, rollButton, flightButton, endTurn);
     }
@@ -410,21 +417,57 @@ public class UI {
         flightMapImage.setOnMouseClicked((MouseEvent e) -> {
             currentPos = new Point2D(e.getX(), e.getY());
             if (!dragging) {
-                System.out.println(e.getX() + " " + e.getY());
+                Point2D point = new Point2D(e.getX(), e.getY());
+                City city = GameData.getMap().findCity(point, GameData.getMap().getFlights());
+                if (city != null) {
+                    flightDialog(city.getName());
+                }
             }
             dragging = false;
         });
     }
 
     private void showFlightPane() {
-        // FIRST MAKE SURE THE USER REALLY WANTS TO EXIT
+        flightDialogStage = new Stage();
+        flightDialogStage.initModality(Modality.WINDOW_MODAL);
+        flightDialogStage.initOwner(primaryStage);
+        GridPane bottomPane = new GridPane();
+        if(flightDialogScene == null)
+            flightDialogScene = new Scene(flightPlanPane, 1100, 800);
+        flightDialogStage.setScene(flightDialogScene);
+        flightDialogStage.show();
+    }
+
+    private void flightDialog(String city) {
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
         Stage dialogStage = new Stage();
         dialogStage.initModality(Modality.WINDOW_MODAL);
         dialogStage.initOwner(primaryStage);
+        BorderPane exitPane = new BorderPane();
+        HBox optionPane = new HBox();
+        Button yesButton = new Button(props.getProperty(PropertyType.DEFAULT_YES_TEXT));
+        Button noButton = new Button(props.getProperty(PropertyType.DEFAULT_NO_TEXT));
+        optionPane.setSpacing(10.0);
+        optionPane.getChildren().addAll(yesButton, noButton);
+        Label exitLabel = new Label(props.getProperty(PropertyType.FLIGHT_DISPLAY_TEXT) + city + "?");
+        exitPane.setCenter(exitLabel);
         GridPane bottomPane = new GridPane();
-        Scene scene = new Scene(flightPlanPane, 1100, 800);
+        bottomPane.add(optionPane, 0, 2);
+        bottomPane.setAlignment(Pos.CENTER);
+        exitPane.setBottom(bottomPane);
+        Scene scene = new Scene(exitPane, 300, 100);
         dialogStage.setScene(scene);
         dialogStage.show();
+        // WHAT'S THE USER'S DECISION?
+        yesButton.setOnAction((ActionEvent e) -> {
+            flightDialogStage.close();
+            dialogStage.close();
+            eventHandler.movePlayer(GameData.getMap().getCity(city));
+        });
+
+        noButton.setOnAction((ActionEvent e) -> {
+            dialogStage.close();
+        });
     }
 
     private void initAboutScreenPane() {
@@ -688,8 +731,9 @@ public class UI {
             player.addVisited(city);
             if (player.hasWon()) {
                 displayWinDialog(player.getName());
+            } else {
+                gsm.nextMove();
             }
-            gsm.nextMove();
         });
         parallelTransition.play();
     }
@@ -744,7 +788,7 @@ public class UI {
                 Point2D origLoc = getCurrentPlayerPosition(playerIcon);
                 playerIcon.setLayoutX(origLoc.getX() - 50);
                 playerIcon.setLayoutY(origLoc.getY() - 100);
-                City city = GameData.getMap().findCity(point);
+                City city = GameData.getMap().findCity(point, GameData.getMap().getLocations());
                 if (city != null) {
                     eventHandler.movePlayer(city);
                 }
@@ -910,7 +954,7 @@ public class UI {
     public JTEEventHandler getEventHandler() {
         return eventHandler;
     }
-    
+
     private void displayWinDialog(String player) {
         gsm.resetGame();
         PropertiesManager props = PropertiesManager.getPropertiesManager();
@@ -922,7 +966,7 @@ public class UI {
         Button ok = new Button(props.getProperty(PropertyType.OK_TEXT));
         optionPane.setSpacing(10.0);
         optionPane.getChildren().addAll(ok);
-        Label exitLabel = new Label(props.getProperty(player + " " + PropertyType.WIN_DISPLAY_TEXT));
+        Label exitLabel = new Label(player + " " + props.getProperty(PropertyType.WIN_DISPLAY_TEXT));
         exitPane.setCenter(exitLabel);
         GridPane bottomPane = new GridPane();
         bottomPane.add(optionPane, 0, 2);
@@ -931,8 +975,12 @@ public class UI {
         Scene scene = new Scene(exitPane, 300, 100);
         dialogStage.setScene(scene);
         dialogStage.show();
-        // WHAT'S THE USER'S DECISION?
         ok.setOnAction((ActionEvent e) -> {
+            changeWorkspace(UIState.SPLASH_SCREEN_STATE);
+            dialogStage.close();
+        });
+        
+        dialogStage.setOnCloseRequest((WindowEvent e) -> {
             changeWorkspace(UIState.SPLASH_SCREEN_STATE);
             dialogStage.close();
         });

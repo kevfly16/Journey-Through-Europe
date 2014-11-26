@@ -104,7 +104,7 @@ public class GameStateManager {
             players.add(player);
             ArrayList<Card> cards = new ArrayList<>(GameData.generateCards());
             if (computer) {
-                while(cards.contains(GameData.getCard("Tirane"))) {
+                while (cards.contains(GameData.getCard("Tirane"))) {
                     cards = new ArrayList<>(GameData.generateCards());
                 }
             }
@@ -139,14 +139,22 @@ public class GameStateManager {
         if (player.getCurrentPosition() == dest) {
             return false;
         }
-        if (!GameData.getMap().getCity(player.getCurrentPosition().getName()).hasCity(dest)) {
-//            return false;
+        if (!GameData.getMap().getCity(player.getCurrentPosition().getName()).hasCity(dest)
+                && !GameData.getMap().hasFlight(player.getCurrentPosition(), dest)) {
+            return false;
         }
         if (player.getPreviousPosition() == dest) {
             return false;
         }
         if (player.getCurrentPosition().isSeaConnection(dest) && !player.isTurnStarted()) {
             return false;
+        }
+        if (GameData.getMap().hasFlight(player.getCurrentPosition(), dest) && !player.hasFlied()) {
+            if (player.hasPointsToFly(dest)) {
+                player.setFlied(true);
+            } else {
+                return false;
+            }
         }
         double x = dest.getPos().getX() - player.getCurrentPosition().getPos().getX();
         double y = dest.getPos().getY() - player.getCurrentPosition().getPos().getY();
@@ -156,7 +164,12 @@ public class GameStateManager {
 
     public boolean decCurrentPoints() {
         Player player = gameData.getCurrentPlayer();
-        player.decPoints(1);
+        int flightPoints = player.getFlightPoints();
+        if (flightPoints > 0) {
+            player.decPoints(flightPoints);
+        } else {
+            player.decPoints(1);
+        }
         ui.loadPointsLeft(player.getCurrentPoints());
         ui.removeLines();
         if (player.getCurrentPoints() == 0) {
@@ -221,6 +234,7 @@ public class GameStateManager {
         }
         p.setPreviousPosition(null);
         p.setTurnStarted(true);
+        p.setFlied(false);
         ui.loadPlayer(p.getName());
         if (p.isComputer()) {
             p.createPath();

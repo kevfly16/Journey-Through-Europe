@@ -14,6 +14,7 @@
         <property name="NUM_CARDS"                  value="3"></property>
         <property name="SPLASH_SCREEN_IMAGE_NAME"   value="Game.png"></property>
         <property name="CITIES_FILE"                value="cities.csv"></property>
+        <property name="FLIGHTS_FILE"               value="flights.csv"></property>
         <property name="CARDS_FILE"                 value="cards.csv"></property>
         <property name="CONNECTIONS_FILE"           value="connections.xml"></property>
         <property name="MAP_IMG"                    value="gameplay.jpg"></property>

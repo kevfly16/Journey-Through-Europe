@@ -26,12 +26,21 @@ public class City implements Comparable {
     private City previousCity;
     private final ArrayList<City> seaConnections;
     private final ArrayList<City> landConnections;
+    public int quarter;
 
     public City(String n) {
         name = n;
         cities = new ArrayList();
         seaConnections = new ArrayList();
         landConnections = new ArrayList();
+    }
+
+    public City(String n, int q) {
+        name = n;
+        cities = new ArrayList();
+        seaConnections = new ArrayList();
+        landConnections = new ArrayList();
+        quarter = q;
     }
 
     public String getName() {
@@ -45,17 +54,26 @@ public class City implements Comparable {
     public ArrayList<City> getCities() {
         return cities;
     }
-    
+
     public void addCity(boolean isLand, City city) {
-        if(isLand)
+        if (isLand) {
             landConnections.add(city);
-        else
+        } else {
             seaConnections.add(city);
+        }
         cities.add(city);
     }
-    
+
     public boolean isSeaConnection(City city) {
         return seaConnections.contains(city);
+    }
+
+    public boolean hasSeaConnections() {
+        return seaConnections.size() > 0;
+    }
+
+    public boolean hasConnections() {
+        return seaConnections.size() > 0 || landConnections.size() > 0;
     }
 
     public City getCity(City city) {
@@ -113,19 +131,19 @@ public class City implements Comparable {
     public double computeDistance(Point2D point) {
         return point.distance(pos);
     }
-    
+
     public void setMinDistance(double min) {
         minDistance = min;
     }
-    
+
     public double getMinDistance() {
         return minDistance;
     }
-    
+
     public void setPreviousCity(City city) {
         previousCity = city;
     }
-    
+
     public City getPreviousCity() {
         return previousCity;
     }
@@ -141,6 +159,10 @@ public class City implements Comparable {
         } else {
             return 1;
         }
+    }
+    
+    public int getQuarter() {
+        return quarter;
     }
 
 }
