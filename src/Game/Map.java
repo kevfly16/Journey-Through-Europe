@@ -40,16 +40,14 @@ public class Map {
         }
 
         src.setMinDistance(0);
-        PriorityQueue<City> cityQueue = new PriorityQueue<City>();
+        PriorityQueue<City> cityQueue = new PriorityQueue<>();
         cityQueue.add(src);
 
         while (!cityQueue.isEmpty()) {
             City city = cityQueue.poll();
-
-            // Visit each edge exiting u
+            // visit each connection a city has
             for (City c : city.getCities()) {
-                double weight = 1;
-                double distance = city.getMinDistance() + weight;
+                double distance = city.getMinDistance() + 1;
                 if (distance < c.getMinDistance()) {
                     cityQueue.remove(c);
                     c.setMinDistance(distance);
@@ -58,6 +56,7 @@ public class Map {
                 }
             }
         }
+        
         ArrayList<City> path = new ArrayList();
         City city = dest;
         while (city != src) {

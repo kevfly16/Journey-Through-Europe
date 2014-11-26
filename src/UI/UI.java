@@ -17,6 +17,8 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.Interpolator;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
@@ -349,10 +351,10 @@ public class UI {
         mapImage.setOnMouseDragged((MouseEvent e) -> {
             dragging = true;
         });
-        
+
         mapImage.setOnMouseClicked((MouseEvent e) -> {
             currentPos = new Point2D(e.getX(), e.getY());
-            if (!dragging) {
+            if (!dragging && gsm.isPlayerTurn()) {
                 Point2D point = new Point2D(e.getX(), e.getY());
                 City city = GameData.getMap().findCity(point);
                 if (city != null) {
@@ -377,10 +379,11 @@ public class UI {
         initFlightPlanPane();
         flightButton = initButton(props.getProperty(PropertyType.FLIGHT_BUTTON));
         flightButton.setOnAction((ActionEvent e) -> {
-            if(gsm.getGameData().getCurrentPlayer().getCurrentPosition().hasPlane())
+            if (gsm.getGameData().getCurrentPlayer().getCurrentPosition().hasPlane()) {
                 showFlightPane();
-            else
+            } else {
                 showFlightPane();
+            }
         });
         flightButton.toBack();
         Button endTurn = initButton(props.getProperty(PropertyType.END_BUTTON));
@@ -389,7 +392,7 @@ public class UI {
         });
         infoPane.getChildren().addAll(playerTurn, pointsLeft, die, rollButton, flightButton, endTurn);
     }
-    
+
     private void initFlightPlanPane() {
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         Pane flightMapPane = new Pane();
@@ -403,7 +406,7 @@ public class UI {
         flightMapImage.setOnMouseDragged((MouseEvent e) -> {
             dragging = true;
         });
-        
+
         flightMapImage.setOnMouseClicked((MouseEvent e) -> {
             currentPos = new Point2D(e.getX(), e.getY());
             if (!dragging) {
@@ -412,7 +415,7 @@ public class UI {
             dragging = false;
         });
     }
-    
+
     private void showFlightPane() {
         // FIRST MAKE SURE THE USER REALLY WANTS TO EXIT
         Stage dialogStage = new Stage();
@@ -528,6 +531,7 @@ public class UI {
                 previousScreenPane = splashScreenPane;
                 splashScreenPane.setVisible(true);
                 aboutScreenPane.setVisible(false);
+                gameplayScreenPane.setVisible(false);
                 break;
             case ABOUT_SCREEN_STATE:
                 splashScreenPane.setVisible(false);
@@ -598,6 +602,11 @@ public class UI {
             for (Card card : cards) {
                 cardsPane.getChildren().add(card.getCardIcon());
             }
+            player = gsm.getGameData().getCurrentPlayer();
+            if (player.isComputer()) {
+                player.createPath();
+                eventHandler.rollDie();
+            }
             return;
         }
         LinkedList cards = new LinkedList(players.getFirst().getCards());
@@ -654,7 +663,7 @@ public class UI {
 
         parallelTransition.play();
     }
-    
+
     public void removeCard(Player player, City city, ImageView card) {
         TranslateTransition translateTransition
                 = new TranslateTransition(Duration.millis(1500), card);
@@ -676,9 +685,11 @@ public class UI {
         );
         parallelTransition.setOnFinished((ActionEvent e) -> {
             cardsPane.getChildren().remove(card);
-            gsm.getGameData().getCurrentPlayer().addVisited(city);
-            if(gsm.getGameData().getCurrentPlayer() == player)
-                gsm.nextMove();
+            player.addVisited(city);
+            if (player.hasWon()) {
+                displayWinDialog(player.getName());
+            }
+            gsm.nextMove();
         });
         parallelTransition.play();
     }
@@ -706,7 +717,7 @@ public class UI {
 
     private void setDragListener(ImageView playerIcon) {
         playerIcon.setOnMouseDragged((MouseEvent e) -> {
-            if (isCurrentPlayer(playerIcon) && gsm.canMove()) {
+            if (isCurrentPlayer(playerIcon) && gsm.isPlayerTurn()) {
                 gamePane.setPannable(false);
                 double x = e.getX();
                 double y = e.getY();
@@ -727,7 +738,7 @@ public class UI {
         });
 
         playerIcon.setOnMouseReleased((MouseEvent e) -> {
-            if (isCurrentPlayer(playerIcon) && gsm.canMove()) {
+            if (isCurrentPlayer(playerIcon) && gsm.isPlayerTurn()) {
                 gamePane.setPannable(true);
                 Point2D point = new Point2D(playerIcon.getLayoutX() + 50, playerIcon.getLayoutY() + 50);
                 Point2D origLoc = getCurrentPlayerPosition(playerIcon);
@@ -777,11 +788,22 @@ public class UI {
             playerIcon.setTranslateY(0);
             playerIcon.setLayoutX(playerIcon.getLayoutX() + x);
             playerIcon.setLayoutY(playerIcon.getLayoutY() + y);
-            gsm.decCurrentPoints();
             int index = player.getCard(city);
-            if (index != player.getCards().size() && city != player.getStartingCity()) {
+            if (index != player.getCards().size() && (city != player.getStartingCity()
+                    || player.getVisited().size() == GameData.getCardsDealt() - 1)) {
                 player.removeCard(city);
-                removeCard(player, city, (ImageView)cardsPane.getChildren().get(index + 1));
+                removeCard(player, city, (ImageView) cardsPane.getChildren().get(index + 1));
+            } else {
+                if (gsm.decCurrentPoints()) {
+                    if (player.isComputer()) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(UI.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        eventHandler.movePlayer(player.getNextPath());
+                    }
+                }
             }
         });
         translateTransition.play();
@@ -819,14 +841,14 @@ public class UI {
         return animRunning;
     }
 
-    public void loadDie(int roll, String path) {
+    public void loadDie(String path) {
         die = new ImageView(loadImage(path));
         die.toBack();
         ObservableList children = infoPane.getChildren();
         children.remove(2);
         children.add(2, die);
         Label label = (Label) children.get(1);
-        label.setText(pointsLost + roll);
+        label.setText(pointsLost + gsm.getGameData().getCurrentPlayer().getCurrentPoints());
     }
 
     public void loadPointsLeft(int roll) {
@@ -879,9 +901,40 @@ public class UI {
         for (Line line : lines) {
             try {
                 children.remove(line);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         }
+    }
+
+    public JTEEventHandler getEventHandler() {
+        return eventHandler;
+    }
+    
+    private void displayWinDialog(String player) {
+        gsm.resetGame();
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        Stage dialogStage = new Stage();
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        dialogStage.initOwner(primaryStage);
+        BorderPane exitPane = new BorderPane();
+        HBox optionPane = new HBox();
+        Button ok = new Button(props.getProperty(PropertyType.OK_TEXT));
+        optionPane.setSpacing(10.0);
+        optionPane.getChildren().addAll(ok);
+        Label exitLabel = new Label(props.getProperty(player + " " + PropertyType.WIN_DISPLAY_TEXT));
+        exitPane.setCenter(exitLabel);
+        GridPane bottomPane = new GridPane();
+        bottomPane.add(optionPane, 0, 2);
+        bottomPane.setAlignment(Pos.CENTER);
+        exitPane.setBottom(bottomPane);
+        Scene scene = new Scene(exitPane, 300, 100);
+        dialogStage.setScene(scene);
+        dialogStage.show();
+        // WHAT'S THE USER'S DECISION?
+        ok.setOnAction((ActionEvent e) -> {
+            changeWorkspace(UIState.SPLASH_SCREEN_STATE);
+            dialogStage.close();
+        });
     }
 }

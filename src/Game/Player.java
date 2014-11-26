@@ -6,6 +6,7 @@
 package Game;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import javafx.scene.image.ImageView;
 
 /**
@@ -26,7 +27,8 @@ public class Player {
     private int roll;
     private final boolean computer;
     private City previousPosition;
-    public boolean turnStarted;
+    private boolean turnStarted;
+    private LinkedList<City> path;
 
     public Player(String n, String f, String i, boolean c) {
         name = n;
@@ -98,14 +100,7 @@ public class Player {
     }
 
     public boolean hasWon() {
-        for (Card card : cards) {
-            City city = GameData.getMap().getCity(card.getCity());
-            if (!visited.contains(city)) {
-                return false;
-            }
-        }
-
-        return true;
+        return visited.size() == GameData.getCardsDealt();
     }
 
     public void rollDie() {
@@ -185,5 +180,23 @@ public class Player {
     
     public boolean isTurnStarted() {
         return turnStarted;
+    }
+    
+    public City getNextPath() {
+        City city = path.removeFirst();
+        System.out.println(city.getName());
+        return city;
+    }
+    
+    public void createPath() {
+        for(int i = 1; i < cards.size(); i++) {
+            City city = GameData.getMap().getCity(cards.get(i).getCity().toUpperCase());
+            if(!visited.contains(city)) {
+                path = new LinkedList<>(GameData.getMap().getPath(currentPosition, city));
+                return;
+            }
+        }
+        
+        path = new LinkedList<>(GameData.getMap().getPath(currentPosition, getStartingCity()));
     }
 }

@@ -34,28 +34,33 @@ public class JTEEventHandler {
     }
 
     public void movePlayer(City city) {
-        if(ui.isAnimRunning())
+        if (ui.isAnimRunning()) {
             return;
-        Player player = ui.getGSM().getGameData().getCurrentPlayer();
-        if(!ui.getGSM().move(player, city)) {
-            System.out.println("Invalid Move!");
         }
-        ArrayList<City> path = GameData.getMap().getPath(player.getCurrentPosition(), GameData.getMap().getCity(player.getCards().get(1).getCity().toUpperCase()));
-        for(City c : path) {
-            System.out.println(c.getName() + ",");
+        Player player = ui.getGSM().getGameData().getCurrentPlayer();
+        if (!ui.getGSM().move(player, city)) {
+            if(player.isComputer()) {
+                ui.getGSM().nextMove();
+            }
         }
     }
-    
+
     public void rollDie() {
-        if(ui.isAnimRunning())
-            return;
-        PropertiesManager props = PropertiesManager.getPropertiesManager();
-        int roll = ui.getGSM().rollDie();
-        if(roll == 0) {
+        if (ui.isAnimRunning()) {
             return;
         }
-        ui.loadDie(roll, props.getPropertyOptionsList(Main.PropertyType.DIE_IMG).get(roll - 1));
-        ui.removeLines();
-        ui.drawLines();
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        int roll = ui.getGSM().rollDie();
+        if (roll == 0) {
+            return;
+        }
+        ui.loadDie(props.getPropertyOptionsList(Main.PropertyType.DIE_IMG).get(roll - 1));
+        Player player = ui.getGSM().getGameData().getCurrentPlayer();
+        if (player.isComputer()) {
+            movePlayer(player.getNextPath());
+        } else {
+            ui.removeLines();
+            ui.drawLines();
+        }
     }
 }

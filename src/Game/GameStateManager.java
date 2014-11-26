@@ -7,6 +7,7 @@ package Game;
 
 import Main.Main.PropertyType;
 import UI.UI;
+import UI.UI.UIState;
 import java.util.ArrayList;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -23,7 +24,7 @@ import properties_manager.PropertiesManager;
 public class GameStateManager {
 
     private final UI ui;
-    private final GameData gameData;
+    private GameData gameData;
     private GameState gameState;
 
     public enum GameState {
@@ -62,13 +63,18 @@ public class GameStateManager {
         if (gameData.getCurrentPlayer().isPlayer()) {
             gameState = GameState.PLAYER_ROLL;
         } else {
-            gameState = GameState.COMPUTER_MOVE;
+            gameState = GameState.COMPUTER_ROLL;
         }
+    }
+
+    public void resetGame() {
+        gameState = GameState.GAME_NOT_STARTED;
+        gameData = new GameData();
     }
 
     private void initPlayers() {
         PropertiesManager props = PropertiesManager.getPropertiesManager();
-         // GET FLAGS
+        // GET FLAGS
         ArrayList<String> flags = props.getPropertyOptionsList(PropertyType.PLAYER_FLAG);
         ArrayList<String> icons = props.getPropertyOptionsList(PropertyType.PLAYER_ICON);
         ArrayList<GridPane> playerSelectPanes = ui.getPlayerSelectPanes();
@@ -96,12 +102,22 @@ public class GameStateManager {
             }
             Player player = new Player(name, flag, icon, computer);
             players.add(player);
-            player.setCards(new ArrayList<>(GameData.generateCards()));
+            ArrayList<Card> cards = new ArrayList<>(GameData.generateCards());
+            if (computer) {
+                while(cards.contains(GameData.getCard("Tirane"))) {
+                    cards = new ArrayList<>(GameData.generateCards());
+                }
+            }
+            player.setCards(cards);
             player.setCurrentPosition(player.getStartingCity());
             index++;
         }
 
         GameData.setPlayers(players);
+    }
+
+    public boolean isPlayerTurn() {
+        return gameState == GameState.PLAYER_MOVE;
     }
 
     public boolean canMove() {
@@ -120,16 +136,16 @@ public class GameStateManager {
         if (!canMove(player)) {
             return false;
         }
-        if(player.getCurrentPosition() == dest) {
+        if (player.getCurrentPosition() == dest) {
             return false;
         }
         if (!GameData.getMap().getCity(player.getCurrentPosition().getName()).hasCity(dest)) {
 //            return false;
         }
-        if(player.getPreviousPosition() == dest) {
+        if (player.getPreviousPosition() == dest) {
             return false;
         }
-        if(player.getCurrentPosition().isSeaConnection(dest) && !player.isTurnStarted()) {
+        if (player.getCurrentPosition().isSeaConnection(dest) && !player.isTurnStarted()) {
             return false;
         }
         double x = dest.getPos().getX() - player.getCurrentPosition().getPos().getX();
@@ -138,16 +154,19 @@ public class GameStateManager {
         return true;
     }
 
-    public void decCurrentPoints() {
+    public boolean decCurrentPoints() {
         Player player = gameData.getCurrentPlayer();
         player.decPoints(1);
         ui.loadPointsLeft(player.getCurrentPoints());
         ui.removeLines();
         if (player.getCurrentPoints() == 0) {
             nextMove();
-            return;
+            return false;
         }
-        ui.drawLines();
+        if (player.isPlayer()) {
+            ui.drawLines();
+        }
+        return true;
     }
 
     public boolean hasWon(Player player) {
@@ -171,32 +190,41 @@ public class GameStateManager {
     public void nextMove() {
         Player p = gameData.getCurrentPlayer();
         if (p.getRoll() == 6) {
-            if (gameData.getCurrentPlayer().isPlayer()) {
+            if (p.isPlayer()) {
                 setGameState(GameState.PLAYER_ROLL);
             } else {
                 setGameState(GameState.COMPUTER_ROLL);
             }
             ui.loadRollAgain();
+            if (p.isComputer()) {
+                p.createPath();
+                ui.getEventHandler().rollDie();
+            }
             return;
         }
         gameData.incCurrentMove();
-        if (gameData.getCurrentPlayer().isPlayer()) {
+        p = gameData.getCurrentPlayer();
+        if (p.isPlayer()) {
             setGameState(GameState.PLAYER_ROLL);
         } else {
             setGameState(GameState.COMPUTER_ROLL);
         }
-        p = gameData.getCurrentPlayer();
         ObservableList<Node> children = ui.getCardsPane().getChildren();
         children.remove(1, children.size());
         Label label = (Label) children.get(0);
         label.setText(p.getName());
         ArrayList<Card> cards = p.getCards();
         for (Card card : cards) {
-            if(!p.hasVisited(card.getCity()))
+            if (!p.hasVisited(card.getCity())) {
                 children.add(card.getCardIcon());
+            }
         }
         p.setPreviousPosition(null);
         p.setTurnStarted(true);
         ui.loadPlayer(p.getName());
+        if (p.isComputer()) {
+            p.createPath();
+            ui.getEventHandler().rollDie();
+        }
     }
 }
