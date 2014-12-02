@@ -12,6 +12,7 @@ import Game.GameData;
 import Game.GameStateManager;
 import Game.Player;
 import Main.Main.PropertyType;
+import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -121,7 +122,7 @@ public class UI {
     private ImageView die;
     private final BooleanProperty dragModeActiveProperty
             = new SimpleBooleanProperty(this, "dragModeActive", true);
-    private final String pointsLost;
+    private final String pointsLeft;
     private final String rollAgain;
     private ArrayList<Line> lines;
     private Stage flightDialogStage;
@@ -155,7 +156,7 @@ public class UI {
         dragging = false;
         animRunning = false;
         currentPos = new Point2D(0, 0);
-        pointsLost = props.getProperty(PropertyType.POINTS_TEXT);
+        pointsLeft = props.getProperty(PropertyType.POINTS_TEXT);
         rollAgain = props.getProperty(PropertyType.ROLL_AGAIN_TEXT);
         flightDialogScene = null;
     }
@@ -362,7 +363,7 @@ public class UI {
                 Point2D point = new Point2D(e.getX(), e.getY());
                 City city = GameData.getMap().findCity(point, GameData.getMap().getLocations());
                 if (city != null) {
-                    eventHandler.movePlayer(city);
+                    eventHandler.movePlayer(city, false);
                 }
             }
             dragging = false;
@@ -462,7 +463,7 @@ public class UI {
         yesButton.setOnAction((ActionEvent e) -> {
             flightDialogStage.close();
             dialogStage.close();
-            eventHandler.movePlayer(GameData.getMap().getCity(city));
+            eventHandler.movePlayer(GameData.getMap().getCity(city), true);
         });
 
         noButton.setOnAction((ActionEvent e) -> {
@@ -669,13 +670,14 @@ public class UI {
             return;
         }
         animRunning = true;
-        ImageView card = new ImageView(loadImage(cards.getFirst().getPath()));
+        String path = cards.getFirst().getPath();
+        ImageView card = new ImageView(loadImage(path));
         cards.getFirst().setCardIcon(card);
         card.setFitWidth(cardWidth);
         card.setFitHeight(cardHeight);
         card.setOnMouseClicked(e -> {
             if (!animRunning) {
-
+               showBackOfCard(path); 
             }
         });
         card.toFront();
@@ -707,7 +709,7 @@ public class UI {
         parallelTransition.play();
     }
 
-    public void removeCard(Player player, City city, ImageView card) {
+    public void removeCard(Player player, City city, ImageView card, Card c) {
         TranslateTransition translateTransition
                 = new TranslateTransition(Duration.millis(1500), card);
         translateTransition.setFromX(0);
@@ -732,7 +734,7 @@ public class UI {
             if (player.hasWon()) {
                 displayWinDialog(player.getName());
             } else {
-                gsm.nextMove();
+                gsm.applyRule(c);
             }
         });
         parallelTransition.play();
@@ -790,7 +792,7 @@ public class UI {
                 playerIcon.setLayoutY(origLoc.getY() - 100);
                 City city = GameData.getMap().findCity(point, GameData.getMap().getLocations());
                 if (city != null) {
-                    eventHandler.movePlayer(city);
+                    eventHandler.movePlayer(city, false);
                 }
             }
         });
@@ -835,8 +837,8 @@ public class UI {
             int index = player.getCard(city);
             if (index != player.getCards().size() && (city != player.getStartingCity()
                     || player.getVisited().size() == GameData.getCardsDealt() - 1)) {
-                player.removeCard(city);
-                removeCard(player, city, (ImageView) cardsPane.getChildren().get(index + 1));
+                Card card = player.removeCard(city);
+                removeCard(player, city, (ImageView) cardsPane.getChildren().get(index + 1), card);
             } else {
                 if (gsm.decCurrentPoints()) {
                     if (player.isComputer()) {
@@ -845,7 +847,7 @@ public class UI {
                         } catch (InterruptedException ex) {
                             Logger.getLogger(UI.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        eventHandler.movePlayer(player.getNextPath());
+                        eventHandler.movePlayer(player.getNextPath(), false);
                     }
                 }
             }
@@ -892,19 +894,19 @@ public class UI {
         children.remove(2);
         children.add(2, die);
         Label label = (Label) children.get(1);
-        label.setText(pointsLost + gsm.getGameData().getCurrentPlayer().getCurrentPoints());
+        label.setText(pointsLeft + gsm.getGameData().getCurrentPlayer().getCurrentPoints());
     }
 
     public void loadPointsLeft(int roll) {
         Label label = (Label) infoPane.getChildren().get(1);
-        label.setText(pointsLost + roll);
+        label.setText(pointsLeft + roll);
     }
 
     public void loadPlayer(String playerName) {
         Label label = (Label) infoPane.getChildren().get(0);
         label.setText(playerName);
         label = (Label) infoPane.getChildren().get(1);
-        label.setText(pointsLost);
+        label.setText(pointsLeft);
     }
 
     public void loadRollAgain() {
@@ -985,4 +987,55 @@ public class UI {
             dialogStage.close();
         });
     }
+    
+    public void loadNegRollDialog() {
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        Stage dialogStage = new Stage();
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        dialogStage.initOwner(primaryStage);
+        BorderPane exitPane = new BorderPane();
+        HBox optionPane = new HBox();
+        Button ok = new Button(props.getProperty(PropertyType.OK_TEXT));
+        optionPane.setSpacing(10.0);
+        optionPane.getChildren().addAll(ok);
+        Label exitLabel = new Label(props.getProperty(PropertyType.SCORE_DISPLAY_TEXT));
+        exitPane.setCenter(exitLabel);
+        GridPane bottomPane = new GridPane();
+        bottomPane.add(optionPane, 0, 2);
+        bottomPane.setAlignment(Pos.CENTER);
+        exitPane.setBottom(bottomPane);
+        Scene scene = new Scene(exitPane, 300, 100);
+        dialogStage.setScene(scene);
+        dialogStage.showAndWait();
+        ok.setOnAction((ActionEvent e) -> {
+            gsm.nextMove();
+            dialogStage.close();
+        });
+        
+        dialogStage.setOnCloseRequest((WindowEvent e) -> {
+            gsm.nextMove();
+            dialogStage.close();
+        });
+    }
+    
+    public void showBackOfCard(String cardPath) {
+        if(gsm.isPlayerTurn()) {
+            return;
+        }
+        cardPath = cardPath.substring(0, cardPath.length() - 4) + "_I.jpg";
+        File file = new File(imgPath + cardPath);
+        System.out.println(imgPath + cardPath);
+        if(!file.exists() || file.isDirectory()) {
+            return;
+        }
+        Stage dialogStage = new Stage();
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        dialogStage.initOwner(primaryStage);
+        BorderPane exitPane = new BorderPane();
+        ImageView card = new ImageView(loadImage(cardPath));
+        exitPane.setCenter(card);
+        Scene scene = new Scene(exitPane, 500, 700);
+        dialogStage.setScene(scene);
+        dialogStage.show();
+    } 
 }

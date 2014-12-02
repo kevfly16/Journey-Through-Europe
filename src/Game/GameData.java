@@ -85,6 +85,19 @@ public class GameData {
         return hand;
     }
 
+    public static Card generateCard() {
+        String[] c = new String[cards.size()];
+        cards.keySet().toArray(c);
+        int rand = (int) (Math.random() * c.length);
+        Card card = cards.get(c[rand]);
+        while (!card.getColor().equals("red") || usedCards.get(card.getCity()) != null) {
+            rand = (int) (Math.random() * c.length);
+            card = cards.get(c[rand]);
+        }
+        usedCards.put(card.getCity(), card);
+        return card;
+    }
+
     public Move getLastMove(Player player) {
         //TODO
         return new Move(player, null);

@@ -7,6 +7,8 @@ package UI;
 
 import Game.City;
 import Game.GameData;
+import Game.GameStateManager;
+import Game.GameStateManager.GameState;
 import Game.Player;
 import Main.Main;
 import UI.UI.UIState;
@@ -33,12 +35,12 @@ public class JTEEventHandler {
         ui.initPlayerIcons();
     }
 
-    public void movePlayer(City city) {
+    public void movePlayer(City city, boolean flying) {
         if (ui.isAnimRunning()) {
             return;
         }
         Player player = ui.getGSM().getGameData().getCurrentPlayer();
-        if (!ui.getGSM().move(player, city)) {
+        if (!ui.getGSM().move(player, city, false, flying)) {
             if(player.isComputer()) {
                 ui.getGSM().nextMove();
             } else {
@@ -56,10 +58,17 @@ public class JTEEventHandler {
         if (roll == 0) {
             return;
         }
+        if(roll == -1) {
+            if(ui.getGSM().getGameState() == GameState.PLAYER_ROLL)
+                ui.loadNegRollDialog();
+            else
+                ui.getGSM().nextMove();
+            return;
+        }
         ui.loadDie(props.getPropertyOptionsList(Main.PropertyType.DIE_IMG).get(roll - 1));
         Player player = ui.getGSM().getGameData().getCurrentPlayer();
         if (player.isComputer()) {
-            movePlayer(player.getNextPath());
+            movePlayer(player.getNextPath(), false);
         } else {
             ui.removeLines();
             ui.drawLines();

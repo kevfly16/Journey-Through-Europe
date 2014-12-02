@@ -9,6 +9,8 @@ import Main.Main.PropertyType;
 import UI.UI;
 import UI.UI.UIState;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -132,28 +134,30 @@ public class GameStateManager {
         }
     }
 
-    public boolean move(Player player, City dest) {
-        if (!canMove(player)) {
-            return false;
-        }
-        if (player.getCurrentPosition() == dest) {
-            return false;
-        }
-        if (!GameData.getMap().getCity(player.getCurrentPosition().getName()).hasCity(dest)
-                && !GameData.getMap().hasFlight(player.getCurrentPosition(), dest)) {
-            return false;
-        }
-        if (player.getPreviousPosition() == dest) {
-            return false;
-        }
-        if (player.getCurrentPosition().isSeaConnection(dest) && !player.isTurnStarted()) {
-            return false;
-        }
-        if (GameData.getMap().hasFlight(player.getCurrentPosition(), dest) && !player.hasFlied()) {
-            if (player.hasPointsToFly(dest)) {
-                player.setFlied(true);
-            } else {
+    public boolean move(Player player, City dest, boolean rule, boolean flying) {
+        if (!rule) {
+            if (!canMove(player)) {
                 return false;
+            }
+            if (player.getCurrentPosition() == dest) {
+                return false;
+            }
+            if (!GameData.getMap().getCity(player.getCurrentPosition().getName()).hasCity(dest)) {
+                if(!flying || !GameData.getMap().hasFlight(player.getCurrentPosition(), dest))
+                    return false;
+            }
+            if (player.getPreviousPosition() == dest) {
+                return false;
+            }
+            if (player.getCurrentPosition().isSeaConnection(dest) && !player.isTurnStarted()) {
+                return false;
+            }
+            if (GameData.getMap().hasFlight(player.getCurrentPosition(), dest) && !player.hasFlied() && flying) {
+                if (player.hasPointsToFly(dest)) {
+                    player.setFlied(true);
+                } else {
+                    return false;
+                }
             }
         }
         double x = dest.getPos().getX() - player.getCurrentPosition().getPos().getX();
@@ -164,6 +168,10 @@ public class GameStateManager {
 
     public boolean decCurrentPoints() {
         Player player = gameData.getCurrentPlayer();
+        if(player.getCurrentPoints() == 0) {
+            nextMove();
+            return false;
+        }
         int flightPoints = player.getFlightPoints();
         if (flightPoints > 0) {
             player.decPoints(flightPoints);
@@ -192,6 +200,9 @@ public class GameStateManager {
         }
         Player player = gameData.getCurrentPlayer();
         player.rollDie();
+        if (player.getCurrentPoints() == 0) {
+            return -1;
+        }
         if (gameState == GameState.PLAYER_ROLL) {
             gameState = GameState.PLAYER_MOVE;
         } else {
@@ -217,6 +228,11 @@ public class GameStateManager {
         }
         gameData.incCurrentMove();
         p = gameData.getCurrentPlayer();
+        if (p.getSkip() > 0) {
+            p.decSkip();
+            gameData.incCurrentMove();
+            p = gameData.getCurrentPlayer();
+        }
         if (p.isPlayer()) {
             setGameState(GameState.PLAYER_ROLL);
         } else {
@@ -239,6 +255,85 @@ public class GameStateManager {
         if (p.isComputer()) {
             p.createPath();
             ui.getEventHandler().rollDie();
+        }
+    }
+
+    public void applyRule(Card card) {
+        Player player = gameData.getCurrentPlayer();
+        if (card.hasRule()) {
+            switch (card.getRuleName()) {
+                case "Travel":
+                    System.out.println("Travel");
+                    City city = card.getDestCity();
+                    if (city == null) {
+                        city = player.getLastCity();
+                    }
+                    player.resetCurrentPoints();
+                    move(player, city, true, false);
+                    break;
+                case "Skip":
+                    System.out.println("Skip");
+                    player.setSkip(card.getSkipTurn());
+                    player.resetRoll();
+                    nextMove();
+                    break;
+                case "Roll Again":
+                    System.out.println("Roll Again");
+                    player.setRollAgain();
+                    nextMove();
+                    break;
+                case "New Card":
+                    System.out.println("New Card");
+                    player.addCard(GameData.generateCard());
+                    player.resetRoll();
+                    nextMove();
+                    break;
+                case "Score":
+                    System.out.println("Score");
+                    player.setScore(card.getScore());
+                    player.resetRoll();
+                    nextMove();
+                    break;
+                case "Points":
+                    System.out.println("Points");
+                    player.addPoints(card.getPoints());
+                    if (decCurrentPoints()) {
+                        if (player.isComputer()) {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException ex) {
+                                Logger.getLogger(UI.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            player.createPath();
+                            ui.getEventHandler().movePlayer(player.getNextPath(), false);
+                        }
+                    }
+                    break;
+                case "Roll":
+                    System.out.println("Roll");
+                    player.setNextRoll(card.getRoll());
+                    player.resetRoll();
+                    nextMove();
+                    break;
+                case "Double":
+                    System.out.println("Double");
+                    player.setDoubleRoll(true);
+                    player.resetRoll();
+                    nextMove();
+                    break;
+            }
+        } else {
+            if (decCurrentPoints()) {
+                if (player.isComputer()) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(UI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    player.createPath();
+                    ui.getEventHandler().movePlayer(player.getNextPath(), false);
+                }
+            }
         }
     }
 }

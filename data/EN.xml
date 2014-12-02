@@ -35,6 +35,7 @@
         <property name="NUM_PLAYERS_TEXT"       value="Number of Players"></property>
         <property name="POINTS_TEXT"            value="Points Left: "></property>
         <property name="ROLL_AGAIN_TEXT"        value="Roll Again"></property>
+        <property name="SCORE_DISPLAY_TEXT"     value="After score deductions you had no points left to roll."></property>
         
         <!-- TOOLTIPS -->
         <property name="GAME_TOOLTIP"           value="Go to Game Screen"></property>

@@ -31,6 +31,10 @@ public class Player {
     private LinkedList<City> path;
     private boolean flied;
     private int flightPoints;
+    private int skip;
+    private int score;
+    private int nextRoll;
+    private boolean doubleRoll;
 
     public Player(String n, String f, String i, boolean c) {
         name = n;
@@ -46,6 +50,10 @@ public class Player {
         previousPosition = null;
         turnStarted = false;
         flied = false;
+        skip = 0;
+        score = 0;
+        nextRoll = 0;
+        doubleRoll = false;
     }
 
     public String getName() {
@@ -80,18 +88,21 @@ public class Player {
     public City getPreviousPosition() {
         return previousPosition;
     }
-
-    public City getFastestPath() {
-        //TODO
-        return null;
-    }
-
+    
     public int getCurrentPoints() {
         return currentPoints;
+    }
+    
+    public void resetCurrentPoints() {
+        currentPoints = 0;
     }
 
     public void decPoints(int dec) {
         currentPoints -= dec;
+    }
+    
+    public void addPoints(int add) {
+        currentPoints += add;
     }
 
     public void setCards(ArrayList<Card> c) {
@@ -101,17 +112,55 @@ public class Player {
     public ArrayList<Card> getCards() {
         return cards;
     }
+    
+    public void addCard(Card card) {
+        cards.add(card);
+    }
 
+    public void setScore(int s) {
+        score = s;
+    }
+    
     public boolean hasWon() {
         return visited.size() == GameData.getCardsDealt();
     }
 
     public void rollDie() {
+        if(nextRoll > 0) {
+            currentPoints = roll = nextRoll;
+            nextRoll = 0;
+            return;
+        }
         currentPoints = roll = (int) (Math.random() * 6 + 1);
+        currentPoints += score;
+        score = 0;
+        if(currentPoints < 0) {
+            currentPoints = 0;
+        }
+        if(doubleRoll) {
+            currentPoints *= 2;
+            doubleRoll = false;
+        }
+    }
+    
+    public void setDoubleRoll(boolean d) {
+        doubleRoll = d;
+    }
+    
+    public void setNextRoll(int next) {
+        nextRoll = next;
     }
 
     public int getRoll() {
         return roll;
+    }
+    
+    public void resetRoll() {
+        roll = 0;
+    }
+    
+    public void setRollAgain() {
+        roll = 6;
     }
 
     public City getStartingCity() {
@@ -150,15 +199,16 @@ public class Player {
         return false;
     }
     
-    public void removeCard(City city) {
+    public Card removeCard(City city) {
         int index = 0;
         for(Card card : cards) {
             if(card.getCity().equalsIgnoreCase(city.getName())) {
-                cards.remove(index);  
-                return;
+                return cards.remove(index);  
             }
             index++;
         }
+        
+        return null;
     }
 
     public ImageView getPlayerIcon() {
@@ -236,5 +286,21 @@ public class Player {
         }
         
         return false;
+    }
+    
+    public City getLastCity() {
+        return GameData.getMap().getCity(cards.get(cards.size() - 1).getCity().toUpperCase());
+    }
+    
+    public int getSkip() {
+        return skip;
+    }
+    
+    public void setSkip(int s) {
+        skip = s;
+    }
+    
+    public void decSkip() {
+        skip--;
     }
 }

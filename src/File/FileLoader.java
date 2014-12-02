@@ -7,6 +7,7 @@ package File;
 
 import Game.Card;
 import Game.City;
+import Game.GameData;
 import Game.Map;
 import Main.Main.PropertyType;
 import java.io.BufferedReader;
@@ -188,8 +189,62 @@ public class FileLoader {
         while ((line = br.readLine()) != null) {
             // use space as separator
             String[] city = line.split(seperator);
-            Card card = new Card(city[0], "", city[1], false, 0, null, false, city[2]);
+            Card card = new Card(city[0], "", city[1], city[2]);
             cards.put(city[0], card);
+            if(city.length > 3) {
+                applyRule(card, city[3]);
+            }
+        }
+    }
+    
+    private static void applyRule(Card card, String rule) {
+        String arr[] = rule.split(":");
+        String ruleName = arr[0];
+        String ruleVal = arr[1];
+        if(null != ruleName) switch (ruleName) {
+            case "Travel":
+                card.setRule(true);
+                card.setRuleName("Travel");
+                if(!ruleVal.equals("card")) {
+                    card.setDestCity(GameData.getMap().getCity(ruleVal.toUpperCase()));
+                }
+                break;
+            case "Skip":
+                card.setRule(true);
+                card.setRuleName("Skip");
+                card.setSkipTurn(Integer.parseInt(ruleVal));
+                break;
+            case "Roll Again":
+                card.setRule(true);
+                card.setRuleName("Roll Again");
+                break;
+            case "New Card":
+                card.setRule(true);
+                card.setRuleName("New Card");
+                break;
+            case "Score":
+                card.setRule(true);
+                card.setRuleName("Score");
+                card.setScore(Integer.parseInt(ruleVal));
+                break;
+            case "Points":
+                card.setRule(true);
+                card.setRuleName("Points");
+                card.setPoints(Integer.parseInt(ruleVal));
+                break;
+            case "Roll":
+                card.setRule(true);
+                card.setRuleName("Roll");
+                card.setRoll(Integer.parseInt(ruleVal));
+                break;
+            case "Flight":
+                card.setRule(true);
+                card.setRuleName("Flight");
+                break;
+            case "Double":
+                card.setRule(true);
+                card.setRuleName("Double");
+                break;
         }
     }
 }
