@@ -20,6 +20,7 @@
         <property name="MAP_IMG"                    value="gameplay.jpg"></property>
         <property name="FLIGHT_IMG"                 value="flightPlan.jpg"></property>
         <property name="SAVE_FILE"                  value="save.txt"></property>
+        <property name="MOVE_SAVE_FILE"             value="moves.txt"></property>
         <property name="DATA_PATH"                  value="./data/"></property>
         <property name="IMG_PATH"                   value="./images/"></property>
         <property name="MUS_PATH"                   value="./music/"></property>

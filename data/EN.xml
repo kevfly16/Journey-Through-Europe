@@ -21,6 +21,7 @@
         <!-- DATA FILES TO LOAD -->
         <property name="ABOUT_FILE_NAME"        value="about.html"></property>
         <property name="HISTORY_FILE_NAME"      value="history.html"></property>
+        <property name="DEFAULT_FILE_NAME"      value="default.html"></property>
         
         <!-- IN-GAME TEXT -->
         <property name="WIN_DISPLAY_TEXT"       value="Won!"></property>

@@ -34,6 +34,7 @@ public class GameData {
         initMap();
         initCards();
         currentMove = 0;
+        moves = new ArrayList();
     }
 
     public ArrayList<Move> getMoves() {
@@ -50,6 +51,16 @@ public class GameData {
 
     public static ArrayList<Player> getPlayers() {
         return players;
+    }
+
+    public static Player getPlayer(String name) {
+        for (Player player : players) {
+            if (player.getName().equals(name)) {
+                return player;
+            }
+        }
+
+        return null;
     }
 
     public static Card getCard(String card) {
@@ -103,7 +114,7 @@ public class GameData {
         //TODO
         return new Move(player, null);
     }
-    
+
     public void setCurrentMove(int move) {
         currentMove = move;
     }
@@ -122,10 +133,6 @@ public class GameData {
 
     public Player getCurrentPlayer() {
         return players.get(currentMove);
-    }
-
-    public void deleteLastMove(Player player) {
-        //TODO
     }
 
     private void initMap() {

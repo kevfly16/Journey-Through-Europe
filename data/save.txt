@@ -1,5 +1,8 @@
 Player Turn:0
-Game State:PLAYER_MOVE
-Player 1|flag_black.png|piece_black.png|false|STOCKHOLM|1|Praha Varna|MOSKVA|2|false|HELSINKI|true|false|0|0|0|0|false
-Player 2|flag_yellow.png|piece_yellow.png|false|PRAHA|0|Budapest Jonkoping Sarajevo||2|true|WIEN|true|false|0|0|0|0|false
-Player 3|flag_blue.png|piece_blue.png|false|LUBECK|0|Rennes Santander|STOCKHOLM|1|true|STOCKHOLM|true|false|0|0|0|0|false
+Game State:PLAYER_ROLL
+Player 1|flag_black.png|piece_black.png|false|MISKOLC|0|Geneve,Poznan,Valladolid||5|false||true|false|0|0|0|0|false
+Player 2|flag_yellow.png|piece_yellow.png|false|HELSINKI|0|Charkov,Bristol,Nice||2|true|LENINGRAD|true|false|0|0|0|0|false
+Player 3|flag_blue.png|piece_blue.png|false|SALZBURG|0|Rennes,Split|TALLIN|4|true|LINZ|true|false|0|0|0|0|false
+Player 4|flag_red.png|piece_red.png|false|LUBECK|1|Zagreb,Pescara|LUBECK|3|true|BREMEN|true|false|0|0|0|0|false
+Player 5|flag_green.png|piece_green.png|false|NIS|0|Dover,Skopje|INVERNESS|4|true|BEOGRAD|true|false|0|0|0|0|false
+Player 6|flag_white.png|piece_white.png|false|BERLIN|0|Brest,Szczecin,Catania||5|true|BREMEN|true|false|0|0|0|0|false

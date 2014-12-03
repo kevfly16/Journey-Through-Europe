@@ -10,6 +10,7 @@ import Game.City;
 import Game.GameData;
 import Game.GameStateManager;
 import Game.Map;
+import Game.Move;
 import Game.Player;
 import Main.Main.PropertyType;
 import UI.UI;
@@ -264,13 +265,15 @@ public class FileLoader {
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         String dataPath = props.getProperty(PropertyType.DATA_PATH);
         String savePath = props.getProperty(PropertyType.SAVE_FILE);
-        File file = new File(dataPath + savePath);
+        String movesPath = props.getProperty(PropertyType.MOVE_SAVE_FILE);
+        File saveFile = new File(dataPath + savePath);
+        File moveFile = new File(dataPath + movesPath);
         BufferedWriter writer = null;
         try {
-            writer = new BufferedWriter(new FileWriter(file));
+            writer = new BufferedWriter(new FileWriter(saveFile, false));
             writer.write("Player Turn:" + gsm.getGameData().getCurrentMove() + "\n");
             writer.write("Game State:" + gsm.getGameState().toString() + "\n");
-            for(Player player : gsm.getGameData().getPlayers()) {
+            for (Player player : GameData.getPlayers()) {
                 String name = player.getName();
                 String flagURL = player.getFlagURL();
                 String iconURL = player.getIconURL();
@@ -278,14 +281,18 @@ public class FileLoader {
                 String currentPosition = player.getCurrentPosition().getName();
                 String currentPoints = player.getCurrentPoints() + "";
                 String cards = "";
-                cards = player.getCards().stream().map((card) -> card.getCity() + " ").reduce(cards, String::concat);
-                cards = cards.trim();
+                cards = player.getCards().stream().map((card) -> card.getCity() + ",").reduce(cards, String::concat);
+                if(cards.length() > 0)
+                    cards = cards.substring(0, cards.length() - 1);
                 String visited = "";
-                visited = player.getVisited().stream().map((city) -> city.getName() + " ").reduce(visited, String::concat);
-                visited = visited.trim();
+                visited = player.getVisited().stream().map((city) -> city.getName() + ",").reduce(visited, String::concat);
+                if(visited.length() > 0)
+                    visited = visited.substring(0, visited.length() - 1);
                 String roll = player.getRoll() + "";
                 String computer = player.isComputer() + "";
-                String previousPosition = player.getPreviousPosition().getName();
+                String previousPosition = "";
+                if(player.getPreviousPosition() != null)
+                    previousPosition = player.getPreviousPosition().getName();
                 String turnStarted = player.isTurnStarted() + "";
                 String flied = player.hasFlied() + "";
                 String flightPoints = player.getFlightPoints() + "";
@@ -293,27 +300,34 @@ public class FileLoader {
                 String score = player.getScore() + "";
                 String nextRoll = player.getNextRoll() + "";
                 String doubleRoll = player.isDoubleRoll() + "";
-                writer.write(name+"|"+flagURL+"|"+iconURL+"|"+skippedTurn+"|"+currentPosition+"|"+currentPoints+"|"
-                        +cards+"|"+visited+"|"+roll+"|"+computer+"|"+previousPosition+"|"+turnStarted+"|"+flied+"|"
-                        +flightPoints+"|"+skip+"|"+score+"|"+nextRoll+"|"+doubleRoll+"\n");
+                writer.write(name + "|" + flagURL + "|" + iconURL + "|" + skippedTurn + "|" + currentPosition + "|" + currentPoints + "|"
+                        + cards + "|" + visited + "|" + roll + "|" + computer + "|" + previousPosition + "|" + turnStarted + "|" + flied + "|"
+                        + flightPoints + "|" + skip + "|" + score + "|" + nextRoll + "|" + doubleRoll + "\n");
+            }
+            writer.close();
+            writer = new BufferedWriter(new FileWriter(moveFile));
+            for(Move move : gsm.getGameData().getMoves()) {
+                writer.write(move.encode() + "\n");
             }
         } catch (Exception e) {
-
+            Logger.getLogger(FileLoader.class.getName()).log(Level.SEVERE, null, e);
         } finally {
             try {
-                if(writer != null)
+                if (writer != null) {
                     writer.close();
+                }
             } catch (IOException ex) {
                 Logger.getLogger(FileLoader.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
-    
+
     public static void loadGame(GameStateManager gsm) {
         try {
             PropertiesManager props = PropertiesManager.getPropertiesManager();
             String dataPath = props.getProperty(PropertyType.DATA_PATH);
             String savePath = props.getProperty(PropertyType.SAVE_FILE);
+            String movePath = props.getProperty(PropertyType.MOVE_SAVE_FILE);
             ArrayList<String> list = new ArrayList<>();
             for (String line : Files.readAllLines(Paths.get(dataPath + savePath))) {
                 list.add(line);
@@ -321,30 +335,31 @@ public class FileLoader {
             gsm.getGameData().setCurrentMove(Integer.valueOf(list.get(0).split(":")[1]));
             gsm.setGameState(list.get(1).split(":")[1]);
             ArrayList<Player> players = new ArrayList();
-            for(int i = 2; i < list.size(); i++) {
+            for (int i = 2; i < list.size(); i++) {
                 String arr[] = list.get(i).split("\\|");
-                Player player = new Player(arr[0], arr[1], arr[2],getBool(arr[9]));
+                Player player = new Player(arr[0], arr[1], arr[2], getBool(arr[9]));
                 player.setSkippedTurn(getBool(arr[3]));
                 player.setCurrentPosition(GameData.getMap().getCity(arr[4]));
                 player.setCurrentPoints(Integer.valueOf(arr[5]));
                 ArrayList<Card> cards = new ArrayList();
                 int index = 0;
-                for(String str : arr[6].split(" ")) {
+                for (String str : arr[6].split(",")) {
                     Card card = GameData.getCard(str);
                     ImageView cardView = new ImageView(gsm.getUI().loadImage(card.getPath()));
                     cardView.setFitWidth(UI.getCardWidth());
                     cardView.setFitHeight(UI.getCardHeight());
                     cardView.setLayoutX(0);
-                    cardView.setLayoutY(UI.getCardYFactor()*index + UI.getCardYConstant());
+                    cardView.setLayoutY(UI.getCardYFactor() * index + UI.getCardYConstant());
                     card.setCardIcon(cardView);
                     cards.add(card);
                     index++;
                 }
                 player.setCards(cards);
                 ArrayList<City> visited = new ArrayList();
-                for(String str : arr[7].split(" ")) {
-                    if(str.equals(""))
+                for (String str : arr[7].split(",")) {
+                    if (str.equals("")) {
                         continue;
+                    }
                     visited.add(GameData.getMap().getCity(str));
                 }
                 player.setVisited(visited);
@@ -360,14 +375,41 @@ public class FileLoader {
                 players.add(player);
             }
             GameData.setPlayers(players);
+            ArrayList<Move> moves = gsm.getGameData().getMoves();
+            for (String line : Files.readAllLines(Paths.get(dataPath + movePath))) {
+                String arr[] = line.split(",");
+                moves.add(new Move(GameData.getPlayer(arr[0]), GameData.getMap().getCity(arr[1]), GameData.getMap().getCity(arr[2]), Integer.valueOf(arr[3])));
+            }
         } catch (IOException ex) {
             Logger.getLogger(FileLoader.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private static boolean getBool(String bool) {
-        if(bool.equals("true"))
+        if (bool.equals("true")) {
             return true;
+        }
         return false;
+    }
+
+    public static void writeHistoryFile(String html) {
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        String historyFile = props.getProperty(PropertyType.HISTORY_FILE_NAME);
+        String path = props.getProperty(PropertyType.DATA_PATH);
+        File file = new File(path + historyFile);
+        BufferedWriter writer = null;
+        try {
+            writer = new BufferedWriter(new FileWriter(file));
+            writer.write(html);
+        } catch (IOException ex) {
+            Logger.getLogger(FileLoader.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (writer != null) {
+                    writer.close();
+                }
+            } catch (Exception e) {
+            }
+        }
     }
 }

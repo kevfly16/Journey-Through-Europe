@@ -87,9 +87,10 @@ public class GameStateManager {
         }
     }
 
-    public void resetGame() {
+    public void stopGame() {
         gameState = GameState.GAME_NOT_STARTED;
         gameData = new GameData();
+        gameData.setPlayers(null);
     }
 
     private void initPlayers() {

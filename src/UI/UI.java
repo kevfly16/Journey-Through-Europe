@@ -10,6 +10,7 @@ import Game.Card;
 import Game.City;
 import Game.GameData;
 import Game.GameStateManager;
+import Game.Move;
 import Game.Player;
 import Main.Main;
 import Main.Main.PropertyType;
@@ -144,7 +145,7 @@ public class UI {
         imgPath = "file:" + props.getProperty(PropertyType.IMG_PATH);
         gsm = new GameStateManager(this);
         moveAnim = new MoveAnimation();
-        docManager = new DocumentManager();
+        docManager = new DocumentManager(this);
         eventHandler = new JTEEventHandler(this);
         errorHandler = new ErrorHandler(primaryStage);
         initMainPane();
@@ -330,7 +331,7 @@ public class UI {
 
         Button save = initButton(props.getProperty(PropertyType.SAVE_BUTTON));
         save.setOnAction((ActionEvent e) -> {
-            if (gsm.isPlayerTurn()) {
+            if (gsm.isPlayerTurn() || gsm.isPlayerRoll()) {
                 gsm.saveGame();
                 loadSaveDialog();
             }
@@ -511,9 +512,8 @@ public class UI {
         loadPage(webEngine, PropertyType.HISTORY_FILE_NAME);
         logo.setLayoutX(paneWidth * 0.37);
         moveScroll.setContent(browser);
-        moveScroll.setMaxHeight(525);
         moveScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        moveScroll.setLayoutX(paneWidth * 0.15);
+        moveScroll.setLayoutX(paneWidth * 0.25);
         moveScroll.setLayoutY(paneHeight * 0.25);
         Button back = initButton(props.getProperty(PropertyType.BACK_BUTTON));
         back.setOnAction((ActionEvent e) -> {
@@ -612,6 +612,7 @@ public class UI {
                 previousScreenPane.setVisible(true);
                 break;
             case HISTORY_SCREEN_STATE:
+                loadHTML();
                 gameplayScreenPane.setVisible(false);
                 moveHistoryScreenPane.setVisible(true);
                 break;
@@ -639,10 +640,19 @@ public class UI {
             webEngine.loadContent(text);
             Reader stringReader = new StringReader(text);
             HTMLEditorKit htmlKit = new HTMLEditorKit();
-            HTMLDocument doc = (HTMLDocument) htmlKit.createDefaultDocument();
-            htmlKit.read(stringReader, doc, 0);
+            HTMLDocument movesDoc = (HTMLDocument) htmlKit.createDefaultDocument();
+            htmlKit.read(stringReader, movesDoc, 0);
+            docManager.setMovesDoc(movesDoc);
         } catch (IOException | BadLocationException ex) {
             errorHandler.processError(PropertyType.INVALID_DOC_ERROR_TEXT);
+        }
+    }
+
+    public void loadHTML() {
+        try {
+            webEngine.loadContent(docManager.loadHTML());
+        } catch (IOException | BadLocationException ex) {
+            errorHandler.processError(PropertyType.INVALID_URL_ERROR_TEXT);
         }
     }
 
@@ -878,6 +888,9 @@ public class UI {
         translateTransition.setCycleCount(1);
         translateTransition.setInterpolator(Interpolator.LINEAR);
         translateTransition.setOnFinished((ActionEvent event) -> {
+            Move move = new Move(player, city);
+            gsm.getGameData().addMove(move);
+            docManager.addMovesToHistoryFile(move);
             animRunning = false;
             player.setCurrentPosition(city);
             playerIcon.setTranslateX(0);
@@ -1008,7 +1021,7 @@ public class UI {
     }
 
     private void displayWinDialog(String player) {
-        gsm.resetGame();
+        gsm.stopGame();
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         Stage dialogStage = new Stage();
         dialogStage.initModality(Modality.WINDOW_MODAL);
@@ -1033,7 +1046,8 @@ public class UI {
         });
 
         dialogStage.setOnCloseRequest((WindowEvent e) -> {
-            changeWorkspace(UIState.SPLASH_SCREEN_STATE);
+            Main main = new Main();
+            main.start(primaryStage);
             dialogStage.close();
         });
     }
@@ -1112,20 +1126,24 @@ public class UI {
             dialogStage.close();
         });
     }
-    
+
     public static int getCardWidth() {
         return cardWidth;
     }
-    
+
     public static int getCardHeight() {
         return cardHeight;
     }
-    
+
     public static int getCardYFactor() {
         return cardYFactor;
     }
-    
+
     public static int getCardYConstant() {
         return cardYConstant;
+    }
+    
+    public Stage getPrimaryStage() {
+        return primaryStage;
     }
 }

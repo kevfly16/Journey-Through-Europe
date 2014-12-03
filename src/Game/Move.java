@@ -10,16 +10,23 @@ package Game;
  * @author Kevin
  */
 public class Move {
-    private Player player;
-    private City src;
-    private City dest;
-    private int roll;
+    private final Player player;
+    private final City src;
+    private final City dest;
+    private final int roll;
     
     public Move(Player p, City d) {
         player = p;
         src = p.getCurrentPosition();
         dest = d;
         roll = p.getRoll();
+    }
+    
+    public Move(Player p, City s, City d, int r) {
+        player = p;
+        src = s;
+        dest = d;
+        roll = r;
     }
     
     public City getSrc() {
@@ -36,5 +43,13 @@ public class Move {
     
     public Player getPlayer() {
         return player;
+    }
+    
+    public String toString() {
+        return getPlayer().getName() + ": " + getSrc().getName() + " -> " + getDest().getName();
+    }
+    
+    public String encode() {
+        return getPlayer().getName() + "," + getSrc().getName() + "," + getDest().getName() + "," + getRoll();
     }
 }
