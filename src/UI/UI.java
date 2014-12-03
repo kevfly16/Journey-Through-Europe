@@ -11,6 +11,7 @@ import Game.City;
 import Game.GameData;
 import Game.GameStateManager;
 import Game.Player;
+import Main.Main;
 import Main.Main.PropertyType;
 import java.io.File;
 import java.io.IOException;
@@ -112,13 +113,13 @@ public class UI {
     private boolean animRunning;
     private Pane cardsPane;
     private VBox infoPane;
-    private int cardWidth;
+    private static int cardWidth;
     private int dieWidth;
-    private int cardHeight;
+    private static int cardHeight;
     private Point2D currentPos;
     private ArrayList<String> flagPaths;
-    private final int cardYFactor = 65;
-    private final int cardYConstant = 25;
+    private static final int cardYFactor = 65;
+    private static final int cardYConstant = 25;
     private ImageView die;
     private final BooleanProperty dragModeActiveProperty
             = new SimpleBooleanProperty(this, "dragModeActive", true);
@@ -216,7 +217,7 @@ public class UI {
         });
         loadButton = initButton(props.getProperty(PropertyType.LOAD_BUTTON));
         loadButton.setOnAction((ActionEvent e) -> {
-            System.out.println("TODO");
+            gsm.loadGame();
         });
         aboutButton = initButton(props.getProperty(PropertyType.ABOUT_BUTTON));
         aboutButton.setOnAction((ActionEvent e) -> {
@@ -327,8 +328,15 @@ public class UI {
             changeWorkspace(UIState.HISTORY_SCREEN_STATE);
         });
 
+        Button save = initButton(props.getProperty(PropertyType.SAVE_BUTTON));
+        save.setOnAction((ActionEvent e) -> {
+            if (gsm.isPlayerTurn()) {
+                gsm.saveGame();
+                loadSaveDialog();
+            }
+        });
         HBox top = new HBox(2);
-        top.getChildren().addAll(about, moveHistoryButton);
+        top.getChildren().addAll(about, moveHistoryButton, save);
 
         cardsPane = new Pane();
         Label label = new Label();
@@ -384,7 +392,7 @@ public class UI {
         initFlightPlanPane();
         flightButton = initButton(props.getProperty(PropertyType.FLIGHT_BUTTON));
         flightButton.setOnAction((ActionEvent e) -> {
-            if (gsm.getGameData().getCurrentPlayer().getCurrentPosition().hasPlane() 
+            if (gsm.getGameData().getCurrentPlayer().getCurrentPosition().hasPlane()
                     && gsm.isPlayerTurn() && !gsm.getGameData().getCurrentPlayer().hasFlied()) {
                 showFlightPane();
             }
@@ -393,10 +401,11 @@ public class UI {
         Button endTurn = initButton(props.getProperty(PropertyType.END_BUTTON));
         endTurn.setOnAction((ActionEvent e) -> {
             Player player = gsm.getGameData().getCurrentPlayer();
-            if(player.getCurrentPosition().hasSeaConnections() || !player.getCurrentPosition().hasConnections())
+            if (player.getCurrentPosition().hasSeaConnections() || !player.getCurrentPosition().hasConnections()) {
                 gsm.nextMove();
-            else
+            } else {
                 System.out.println("Cannot end move!");
+            }
         });
         infoPane.getChildren().addAll(playerTurn, pointsLeft, die, rollButton, flightButton, endTurn);
     }
@@ -433,8 +442,9 @@ public class UI {
         flightDialogStage.initModality(Modality.WINDOW_MODAL);
         flightDialogStage.initOwner(primaryStage);
         GridPane bottomPane = new GridPane();
-        if(flightDialogScene == null)
+        if (flightDialogScene == null) {
             flightDialogScene = new Scene(flightPlanPane, 1100, 800);
+        }
         flightDialogStage.setScene(flightDialogScene);
         flightDialogStage.show();
     }
@@ -538,7 +548,7 @@ public class UI {
         primaryStage = stage;
     }
 
-    private Image loadImage(String imageName) {
+    public Image loadImage(String imageName) {
         Image img = new Image(imgPath + imageName);
         return img;
     }
@@ -590,6 +600,7 @@ public class UI {
                 previousScreenPane = gameplayScreenPane;
                 gameSetupPane.setVisible(false);
                 moveHistoryScreenPane.setVisible(false);
+                splashScreenPane.setVisible(false);
                 gameplayScreenPane.setVisible(true);
                 break;
             case PREVIOUS_SCREEN_STATE:
@@ -677,7 +688,7 @@ public class UI {
         card.setFitHeight(cardHeight);
         card.setOnMouseClicked(e -> {
             if (!animRunning) {
-               showBackOfCard(path); 
+                showBackOfCard(path);
             }
         });
         card.toFront();
@@ -759,6 +770,45 @@ public class UI {
         }
         Label label = (Label) infoPane.getChildren().get(0);
         label.setText(players.get(0).getName());
+    }
+
+    public void loadUI() {
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        ArrayList<Player> players = GameData.getPlayers();
+        int index = 0;
+        for (Player player : players) {
+            ImageView playerIcon = new ImageView(loadImage(player.getIconURL()));
+            ImageView flagIcon = new ImageView(loadImage(player.getFlagURL()));
+            playerIcon.setLayoutX(player.getCurrentPosition().getPos().getX() - 50);
+            playerIcon.setLayoutY(player.getCurrentPosition().getPos().getY() - 100);
+            flagIcon.setLayoutX(player.getStartingCity().getPos().getX() - 50);
+            flagIcon.setLayoutY(player.getStartingCity().getPos().getY() - 100);
+            playerIcon.toFront();
+            mapPane.getChildren().add(playerIcon);
+            mapPane.getChildren().add(flagIcon);
+            player.setPlayerIcon(playerIcon);
+            index++;
+            setDragListener(playerIcon);
+        }
+        Player player = gsm.getGameData().getCurrentPlayer();
+        Label label = (Label) infoPane.getChildren().get(0);
+        label.setText(player.getName());
+        ObservableList<Node> children = cardsPane.getChildren();
+        children.remove(1, children.size());
+        label = (Label) children.get(0);
+        label.setText(player.getName());
+        ArrayList<Card> cards = player.getCards();
+        for (Card card : cards) {
+            if (!player.hasVisited(card.getCity())) {
+                System.out.println(card.getCity());
+                children.add(card.getCardIcon());
+            }
+        }
+        if (gsm.isPlayerTurn()) {
+            loadDie(props.getPropertyOptionsList(PropertyType.DIE_IMG).get(player.getRoll() - 1));
+            loadPointsLeft(player.getCurrentPoints());
+            drawLines();
+        }
     }
 
     private void setDragListener(ImageView playerIcon) {
@@ -897,9 +947,9 @@ public class UI {
         label.setText(pointsLeft + gsm.getGameData().getCurrentPlayer().getCurrentPoints());
     }
 
-    public void loadPointsLeft(int roll) {
+    public void loadPointsLeft(int points) {
         Label label = (Label) infoPane.getChildren().get(1);
-        label.setText(pointsLeft + roll);
+        label.setText(pointsLeft + points);
     }
 
     public void loadPlayer(String playerName) {
@@ -981,13 +1031,13 @@ public class UI {
             changeWorkspace(UIState.SPLASH_SCREEN_STATE);
             dialogStage.close();
         });
-        
+
         dialogStage.setOnCloseRequest((WindowEvent e) -> {
             changeWorkspace(UIState.SPLASH_SCREEN_STATE);
             dialogStage.close();
         });
     }
-    
+
     public void loadNegRollDialog() {
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         Stage dialogStage = new Stage();
@@ -1011,21 +1061,21 @@ public class UI {
             gsm.nextMove();
             dialogStage.close();
         });
-        
+
         dialogStage.setOnCloseRequest((WindowEvent e) -> {
             gsm.nextMove();
             dialogStage.close();
         });
     }
-    
-    public void showBackOfCard(String cardPath) {
-        if(gsm.isPlayerTurn()) {
+
+    private void showBackOfCard(String cardPath) {
+        if (!gsm.isPlayerTurn() && !gsm.isPlayerRoll()) {
             return;
         }
         cardPath = cardPath.substring(0, cardPath.length() - 4) + "_I.jpg";
         File file = new File(imgPath + cardPath);
         System.out.println(imgPath + cardPath);
-        if(!file.exists() || file.isDirectory()) {
+        if (!file.exists() || file.isDirectory()) {
             return;
         }
         Stage dialogStage = new Stage();
@@ -1037,5 +1087,45 @@ public class UI {
         Scene scene = new Scene(exitPane, 500, 700);
         dialogStage.setScene(scene);
         dialogStage.show();
-    } 
+    }
+
+    private void loadSaveDialog() {
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        Stage dialogStage = new Stage();
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        dialogStage.initOwner(primaryStage);
+        BorderPane exitPane = new BorderPane();
+        HBox optionPane = new HBox();
+        Button ok = new Button(props.getProperty(PropertyType.OK_TEXT));
+        optionPane.setSpacing(10.0);
+        optionPane.getChildren().addAll(ok);
+        Label exitLabel = new Label(props.getProperty(PropertyType.SAVE_DISPLAY_TEXT));
+        exitPane.setCenter(exitLabel);
+        GridPane bottomPane = new GridPane();
+        bottomPane.add(optionPane, 0, 2);
+        bottomPane.setAlignment(Pos.CENTER);
+        exitPane.setBottom(bottomPane);
+        Scene scene = new Scene(exitPane, 300, 100);
+        dialogStage.setScene(scene);
+        dialogStage.show();
+        ok.setOnAction((ActionEvent e) -> {
+            dialogStage.close();
+        });
+    }
+    
+    public static int getCardWidth() {
+        return cardWidth;
+    }
+    
+    public static int getCardHeight() {
+        return cardHeight;
+    }
+    
+    public static int getCardYFactor() {
+        return cardYFactor;
+    }
+    
+    public static int getCardYConstant() {
+        return cardYConstant;
+    }
 }

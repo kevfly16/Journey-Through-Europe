@@ -1,0 +1,5 @@
+Player Turn:0
+Game State:PLAYER_MOVE
+Player 1|flag_black.png|piece_black.png|false|STOCKHOLM|1|Praha Varna|MOSKVA|2|false|HELSINKI|true|false|0|0|0|0|false
+Player 2|flag_yellow.png|piece_yellow.png|false|PRAHA|0|Budapest Jonkoping Sarajevo||2|true|WIEN|true|false|0|0|0|0|false
+Player 3|flag_blue.png|piece_blue.png|false|LUBECK|0|Rennes Santander|STOCKHOLM|1|true|STOCKHOLM|true|false|0|0|0|0|false

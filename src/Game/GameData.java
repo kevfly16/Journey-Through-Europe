@@ -33,6 +33,7 @@ public class GameData {
     public GameData() {
         initMap();
         initCards();
+        currentMove = 0;
     }
 
     public ArrayList<Move> getMoves() {
@@ -101,6 +102,10 @@ public class GameData {
     public Move getLastMove(Player player) {
         //TODO
         return new Move(player, null);
+    }
+    
+    public void setCurrentMove(int move) {
+        currentMove = move;
     }
 
     public int getCurrentMove() {

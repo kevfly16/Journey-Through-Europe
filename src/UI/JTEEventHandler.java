@@ -11,6 +11,7 @@ import Game.GameStateManager;
 import Game.GameStateManager.GameState;
 import Game.Player;
 import Main.Main;
+import Main.Main.PropertyType;
 import UI.UI.UIState;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -65,7 +66,7 @@ public class JTEEventHandler {
                 ui.getGSM().nextMove();
             return;
         }
-        ui.loadDie(props.getPropertyOptionsList(Main.PropertyType.DIE_IMG).get(roll - 1));
+        ui.loadDie(props.getPropertyOptionsList(PropertyType.DIE_IMG).get(roll - 1));
         Player player = ui.getGSM().getGameData().getCurrentPlayer();
         if (player.isComputer()) {
             movePlayer(player.getNextPath(), false);

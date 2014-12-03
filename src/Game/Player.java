@@ -23,9 +23,9 @@ public class Player {
     private City currentPosition;
     private int currentPoints;
     private ArrayList<Card> cards;
-    private final ArrayList<City> visited;
+    private ArrayList<City> visited;
     private int roll;
-    private final boolean computer;
+    private boolean computer;
     private City previousPosition;
     private boolean turnStarted;
     private LinkedList<City> path;
@@ -89,6 +89,10 @@ public class Player {
         return previousPosition;
     }
     
+    public void setCurrentPoints(int points) {
+        currentPoints = points;
+    }
+    
     public int getCurrentPoints() {
         return currentPoints;
     }
@@ -115,6 +119,10 @@ public class Player {
     
     public void addCard(Card card) {
         cards.add(card);
+    }
+    
+    public int getScore() {
+        return score;
     }
 
     public void setScore(int s) {
@@ -147,8 +155,20 @@ public class Player {
         doubleRoll = d;
     }
     
+    public boolean isDoubleRoll() {
+        return doubleRoll;
+    }
+    
+    public int getNextRoll() {
+        return nextRoll;
+    }
+    
     public void setNextRoll(int next) {
         nextRoll = next;
+    }
+    
+    public void setRoll(int r) {
+        roll = r;
     }
 
     public int getRoll() {
@@ -165,6 +185,10 @@ public class Player {
 
     public City getStartingCity() {
         return GameData.getMap().getCity(cards.get(0).getCity().toUpperCase());
+    }
+    
+    public void setVisited(ArrayList<City> v) {
+        visited = v;
     }
 
     public ArrayList<City> getVisited() {
@@ -214,6 +238,10 @@ public class Player {
     public ImageView getPlayerIcon() {
         return playerIcon;
     }
+    
+    public void setComputer(boolean c) {
+        computer = c;
+    }
 
     public boolean isComputer() {
         return computer;
@@ -259,6 +287,10 @@ public class Player {
     
     public boolean hasFlied() {
         return flied;
+    }
+    
+    public void setFlightPoints(int points) {
+        flightPoints = points;
     }
     
     public int getFlightPoints() {

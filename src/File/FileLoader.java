@@ -8,14 +8,24 @@ package File;
 import Game.Card;
 import Game.City;
 import Game.GameData;
+import Game.GameStateManager;
 import Game.Map;
+import Game.Player;
 import Main.Main.PropertyType;
+import UI.UI;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.image.ImageView;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -191,60 +201,173 @@ public class FileLoader {
             String[] city = line.split(seperator);
             Card card = new Card(city[0], "", city[1], city[2]);
             cards.put(city[0], card);
-            if(city.length > 3) {
+            if (city.length > 3) {
                 applyRule(card, city[3]);
             }
         }
     }
-    
+
     private static void applyRule(Card card, String rule) {
         String arr[] = rule.split(":");
         String ruleName = arr[0];
         String ruleVal = arr[1];
-        if(null != ruleName) switch (ruleName) {
-            case "Travel":
-                card.setRule(true);
-                card.setRuleName("Travel");
-                if(!ruleVal.equals("card")) {
-                    card.setDestCity(GameData.getMap().getCity(ruleVal.toUpperCase()));
-                }
-                break;
-            case "Skip":
-                card.setRule(true);
-                card.setRuleName("Skip");
-                card.setSkipTurn(Integer.parseInt(ruleVal));
-                break;
-            case "Roll Again":
-                card.setRule(true);
-                card.setRuleName("Roll Again");
-                break;
-            case "New Card":
-                card.setRule(true);
-                card.setRuleName("New Card");
-                break;
-            case "Score":
-                card.setRule(true);
-                card.setRuleName("Score");
-                card.setScore(Integer.parseInt(ruleVal));
-                break;
-            case "Points":
-                card.setRule(true);
-                card.setRuleName("Points");
-                card.setPoints(Integer.parseInt(ruleVal));
-                break;
-            case "Roll":
-                card.setRule(true);
-                card.setRuleName("Roll");
-                card.setRoll(Integer.parseInt(ruleVal));
-                break;
-            case "Flight":
-                card.setRule(true);
-                card.setRuleName("Flight");
-                break;
-            case "Double":
-                card.setRule(true);
-                card.setRuleName("Double");
-                break;
+        if (null != ruleName) {
+            switch (ruleName) {
+                case "Travel":
+                    card.setRule(true);
+                    card.setRuleName("Travel");
+                    if (!ruleVal.equals("card")) {
+                        card.setDestCity(GameData.getMap().getCity(ruleVal.toUpperCase()));
+                    }
+                    break;
+                case "Skip":
+                    card.setRule(true);
+                    card.setRuleName("Skip");
+                    card.setSkipTurn(Integer.parseInt(ruleVal));
+                    break;
+                case "Roll Again":
+                    card.setRule(true);
+                    card.setRuleName("Roll Again");
+                    break;
+                case "New Card":
+                    card.setRule(true);
+                    card.setRuleName("New Card");
+                    break;
+                case "Score":
+                    card.setRule(true);
+                    card.setRuleName("Score");
+                    card.setScore(Integer.parseInt(ruleVal));
+                    break;
+                case "Points":
+                    card.setRule(true);
+                    card.setRuleName("Points");
+                    card.setPoints(Integer.parseInt(ruleVal));
+                    break;
+                case "Roll":
+                    card.setRule(true);
+                    card.setRuleName("Roll");
+                    card.setRoll(Integer.parseInt(ruleVal));
+                    break;
+                case "Flight":
+                    card.setRule(true);
+                    card.setRuleName("Flight");
+                    break;
+                case "Double":
+                    card.setRule(true);
+                    card.setRuleName("Double");
+                    break;
+            }
         }
+    }
+
+    public static void saveGame(GameStateManager gsm) {
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        String dataPath = props.getProperty(PropertyType.DATA_PATH);
+        String savePath = props.getProperty(PropertyType.SAVE_FILE);
+        File file = new File(dataPath + savePath);
+        BufferedWriter writer = null;
+        try {
+            writer = new BufferedWriter(new FileWriter(file));
+            writer.write("Player Turn:" + gsm.getGameData().getCurrentMove() + "\n");
+            writer.write("Game State:" + gsm.getGameState().toString() + "\n");
+            for(Player player : gsm.getGameData().getPlayers()) {
+                String name = player.getName();
+                String flagURL = player.getFlagURL();
+                String iconURL = player.getIconURL();
+                String skippedTurn = player.hasSkippedTurn() + "";
+                String currentPosition = player.getCurrentPosition().getName();
+                String currentPoints = player.getCurrentPoints() + "";
+                String cards = "";
+                cards = player.getCards().stream().map((card) -> card.getCity() + " ").reduce(cards, String::concat);
+                cards = cards.trim();
+                String visited = "";
+                visited = player.getVisited().stream().map((city) -> city.getName() + " ").reduce(visited, String::concat);
+                visited = visited.trim();
+                String roll = player.getRoll() + "";
+                String computer = player.isComputer() + "";
+                String previousPosition = player.getPreviousPosition().getName();
+                String turnStarted = player.isTurnStarted() + "";
+                String flied = player.hasFlied() + "";
+                String flightPoints = player.getFlightPoints() + "";
+                String skip = player.getSkip() + "";
+                String score = player.getScore() + "";
+                String nextRoll = player.getNextRoll() + "";
+                String doubleRoll = player.isDoubleRoll() + "";
+                writer.write(name+"|"+flagURL+"|"+iconURL+"|"+skippedTurn+"|"+currentPosition+"|"+currentPoints+"|"
+                        +cards+"|"+visited+"|"+roll+"|"+computer+"|"+previousPosition+"|"+turnStarted+"|"+flied+"|"
+                        +flightPoints+"|"+skip+"|"+score+"|"+nextRoll+"|"+doubleRoll+"\n");
+            }
+        } catch (Exception e) {
+
+        } finally {
+            try {
+                if(writer != null)
+                    writer.close();
+            } catch (IOException ex) {
+                Logger.getLogger(FileLoader.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    public static void loadGame(GameStateManager gsm) {
+        try {
+            PropertiesManager props = PropertiesManager.getPropertiesManager();
+            String dataPath = props.getProperty(PropertyType.DATA_PATH);
+            String savePath = props.getProperty(PropertyType.SAVE_FILE);
+            ArrayList<String> list = new ArrayList<>();
+            for (String line : Files.readAllLines(Paths.get(dataPath + savePath))) {
+                list.add(line);
+            }
+            gsm.getGameData().setCurrentMove(Integer.valueOf(list.get(0).split(":")[1]));
+            gsm.setGameState(list.get(1).split(":")[1]);
+            ArrayList<Player> players = new ArrayList();
+            for(int i = 2; i < list.size(); i++) {
+                String arr[] = list.get(i).split("\\|");
+                Player player = new Player(arr[0], arr[1], arr[2],getBool(arr[9]));
+                player.setSkippedTurn(getBool(arr[3]));
+                player.setCurrentPosition(GameData.getMap().getCity(arr[4]));
+                player.setCurrentPoints(Integer.valueOf(arr[5]));
+                ArrayList<Card> cards = new ArrayList();
+                int index = 0;
+                for(String str : arr[6].split(" ")) {
+                    Card card = GameData.getCard(str);
+                    ImageView cardView = new ImageView(gsm.getUI().loadImage(card.getPath()));
+                    cardView.setFitWidth(UI.getCardWidth());
+                    cardView.setFitHeight(UI.getCardHeight());
+                    cardView.setLayoutX(0);
+                    cardView.setLayoutY(UI.getCardYFactor()*index + UI.getCardYConstant());
+                    card.setCardIcon(cardView);
+                    cards.add(card);
+                    index++;
+                }
+                player.setCards(cards);
+                ArrayList<City> visited = new ArrayList();
+                for(String str : arr[7].split(" ")) {
+                    if(str.equals(""))
+                        continue;
+                    visited.add(GameData.getMap().getCity(str));
+                }
+                player.setVisited(visited);
+                player.setRoll(Integer.valueOf(arr[8]));
+                player.setPreviousPosition(GameData.getMap().getCity(arr[10]));
+                player.setTurnStarted(getBool(arr[11]));
+                player.setFlied(getBool(arr[12]));
+                player.setFlightPoints(Integer.valueOf(arr[13]));
+                player.setSkip(Integer.valueOf(arr[14]));
+                player.setScore(Integer.valueOf(arr[15]));
+                player.setNextRoll(Integer.valueOf(arr[16]));
+                player.setDoubleRoll(getBool(arr[17]));
+                players.add(player);
+            }
+            GameData.setPlayers(players);
+        } catch (IOException ex) {
+            Logger.getLogger(FileLoader.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private static boolean getBool(String bool) {
+        if(bool.equals("true"))
+            return true;
+        return false;
     }
 }

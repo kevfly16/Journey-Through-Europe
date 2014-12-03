@@ -5,6 +5,7 @@
  */
 package Game;
 
+import File.FileLoader;
 import Main.Main.PropertyType;
 import UI.UI;
 import UI.UI.UIState;
@@ -49,6 +50,23 @@ public class GameStateManager {
 
     public void setGameState(GameState state) {
         gameState = state;
+    }
+
+    public void setGameState(String state) {
+        switch (state) {
+            case "PLAYER_MOVE":
+                setGameState(GameState.PLAYER_MOVE);
+                break;
+            case "COMPUTER_MOVE":
+                setGameState(GameState.COMPUTER_MOVE);
+                break;
+            case "PLAYER_ROLL":
+                setGameState(GameState.PLAYER_ROLL);
+                break;
+            case "COMPUTER_ROLL":
+                setGameState(GameState.PLAYER_MOVE);
+                break;
+        }
     }
 
     public GameData getGameData() {
@@ -121,6 +139,10 @@ public class GameStateManager {
     public boolean isPlayerTurn() {
         return gameState == GameState.PLAYER_MOVE;
     }
+    
+    public boolean isPlayerRoll() {
+        return gameState == GameState.PLAYER_ROLL;
+    }
 
     public boolean canMove() {
         return gameState == GameState.PLAYER_MOVE || gameState == GameState.COMPUTER_MOVE;
@@ -143,8 +165,9 @@ public class GameStateManager {
                 return false;
             }
             if (!GameData.getMap().getCity(player.getCurrentPosition().getName()).hasCity(dest)) {
-                if(!flying || !GameData.getMap().hasFlight(player.getCurrentPosition(), dest))
+                if (!flying || !GameData.getMap().hasFlight(player.getCurrentPosition(), dest)) {
                     return false;
+                }
             }
             if (player.getPreviousPosition() == dest) {
                 return false;
@@ -168,7 +191,7 @@ public class GameStateManager {
 
     public boolean decCurrentPoints() {
         Player player = gameData.getCurrentPlayer();
-        if(player.getCurrentPoints() == 0) {
+        if (player.getCurrentPoints() == 0) {
             nextMove();
             return false;
         }
@@ -335,5 +358,16 @@ public class GameStateManager {
                 }
             }
         }
+    }
+
+    public void saveGame() {
+        FileLoader.saveGame(this);
+    }
+    
+    public void loadGame() {
+        FileLoader.loadGame(this);
+        ui.loadUI();
+        ui.changeWorkspace(UIState.GAMEPLAY_SCREEN_STATE);
+        
     }
 }
