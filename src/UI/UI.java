@@ -1041,11 +1041,13 @@ public class UI {
         dialogStage.setScene(scene);
         dialogStage.show();
         ok.setOnAction((ActionEvent e) -> {
-            changeWorkspace(UIState.SPLASH_SCREEN_STATE);
+            Main main = new Main();
+            main.start(primaryStage);
             dialogStage.close();
         });
 
         dialogStage.setOnCloseRequest((WindowEvent e) -> {
+            System.exit(0);
             Main main = new Main();
             main.start(primaryStage);
             dialogStage.close();
