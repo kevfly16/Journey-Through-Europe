@@ -1,8 +1,5 @@
 Player Turn:0
 Game State:PLAYER_ROLL
-Player 1|flag_black.png|piece_black.png|false|PARIS|0|Geneve,Valladolid|POZNAN|5|false||true|false|0|0|0|0|false
-Player 2|flag_yellow.png|piece_yellow.png|false|OSLO|0|Charkov,Bristol,Nice||2|true|KARLSTAD|true|false|0|0|0|0|false
-Player 3|flag_blue.png|piece_blue.png|false|MILANO|0|Rennes|TALLIN,SPLIT|4|true|BOLOGNA|true|false|0|0|0|0|false
-Player 4|flag_red.png|piece_red.png|false|ANCONA|0|Zagreb|LUBECK,PESCARA|4|true|PESCARA|true|false|0|0|0|0|false
-Player 5|flag_green.png|piece_green.png|false|INNSBRUCK|0|Dover|INVERNESS,SKOPJE|5|true|SALZBURG|true|false|0|0|0|0|false
-Player 6|flag_white.png|piece_white.png|false|FIRENZE|0|Brest,Catania|SZCZECIN|2|true|STUTTGART|true|false|0|0|0|0|false
+Player 1|flag_black.png|piece_black.png|false|NIS|0|Nancy|AMSTERDAM,SKOPJE|1|false||true|false|0|0|0|0|false
+Player 2|flag_yellow.png|piece_yellow.png|false|MOSKVA|0|Brest,Athinai|ROVANIEMI|5|true|LENINGRAD|true|false|0|0|0|0|false
+Player 3|flag_blue.png|piece_blue.png|false|DUBLIN|0|Miskolc,Sevilla|BELFAST|5|true|BELFAST|true|false|0|0|0|0|false

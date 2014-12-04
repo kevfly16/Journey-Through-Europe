@@ -140,7 +140,7 @@ public class GameStateManager {
     public boolean isPlayerTurn() {
         return gameState == GameState.PLAYER_MOVE;
     }
-    
+
     public boolean isPlayerRoll() {
         return gameState == GameState.PLAYER_ROLL;
     }
@@ -186,6 +186,13 @@ public class GameStateManager {
         }
         double x = dest.getPos().getX() - player.getCurrentPosition().getPos().getX();
         double y = dest.getPos().getY() - player.getCurrentPosition().getPos().getY();
+        if (player.isComputer()) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(UI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         ui.movePlayer(player, x, y, dest);
         return true;
     }
@@ -248,6 +255,7 @@ public class GameStateManager {
                 p.createPath();
                 ui.getEventHandler().rollDie();
             }
+            ui.moveScrollPane(p);
             return;
         }
         gameData.incCurrentMove();
@@ -280,6 +288,7 @@ public class GameStateManager {
             p.createPath();
             ui.getEventHandler().rollDie();
         }
+        ui.moveScrollPane(p);
     }
 
     public void applyRule(Card card) {
@@ -323,11 +332,6 @@ public class GameStateManager {
                     player.addPoints(card.getPoints());
                     if (decCurrentPoints()) {
                         if (player.isComputer()) {
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException ex) {
-                                Logger.getLogger(UI.class.getName()).log(Level.SEVERE, null, ex);
-                            }
                             player.createPath();
                             ui.getEventHandler().movePlayer(player.getNextPath(), false);
                         }
@@ -349,11 +353,6 @@ public class GameStateManager {
         } else {
             if (decCurrentPoints()) {
                 if (player.isComputer()) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(UI.class.getName()).log(Level.SEVERE, null, ex);
-                    }
                     player.createPath();
                     ui.getEventHandler().movePlayer(player.getNextPath(), false);
                 }
@@ -364,11 +363,10 @@ public class GameStateManager {
     public void saveGame() {
         FileLoader.saveGame(this);
     }
-    
+
     public void loadGame() {
         FileLoader.loadGame(this);
         ui.loadUI();
         ui.changeWorkspace(UIState.GAMEPLAY_SCREEN_STATE);
-        
     }
 }

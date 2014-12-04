@@ -18,6 +18,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.logging.Level;
@@ -129,6 +132,8 @@ public class UI {
     private ArrayList<Line> lines;
     private Stage flightDialogStage;
     private Scene flightDialogScene;
+    private final int mapWidth;
+    private final int mapHeight;
 
     /**
      * The UIState represents the four screen states that are possible for the
@@ -148,6 +153,8 @@ public class UI {
         docManager = new DocumentManager(this);
         eventHandler = new JTEEventHandler(this);
         errorHandler = new ErrorHandler(primaryStage);
+        mapWidth = Integer.valueOf(props.getProperty(PropertyType.MAP_WIDTH));
+        mapHeight = Integer.valueOf(props.getProperty(PropertyType.MAP_HEIGHT));
         initMainPane();
         initSplashScreenPane();
         initGameSetupPane();
@@ -360,8 +367,6 @@ public class UI {
         // wrap the scene contents in a pannable scroll pane.
         gamePane = createScrollPane(mapPane);
         // center the scroll contents.
-        gamePane.setHvalue(gamePane.getHmin() + (gamePane.getHmax() - gamePane.getHmin()) / 2);
-        gamePane.setVvalue(gamePane.getVmin() + (gamePane.getVmax() - gamePane.getVmin()) / 2);
         mapImage.setOnMouseDragged((MouseEvent e) -> {
             dragging = true;
         });
@@ -672,6 +677,7 @@ public class UI {
                 player.createPath();
                 eventHandler.rollDie();
             }
+            moveScrollPane(player);
             return;
         }
         LinkedList cards = new LinkedList(players.getFirst().getCards());
@@ -755,7 +761,11 @@ public class UI {
             if (player.hasWon()) {
                 displayWinDialog(player.getName());
             } else {
-                gsm.applyRule(c);
+                if (player.isPlayer()) {
+                    showRule(c);
+                } else {
+                    gsm.applyRule(c);
+                }
             }
         });
         parallelTransition.play();
@@ -819,6 +829,7 @@ public class UI {
             loadPointsLeft(player.getCurrentPoints());
             drawLines();
         }
+        moveScrollPane(player);
     }
 
     private void setDragListener(ImageView playerIcon) {
@@ -905,11 +916,6 @@ public class UI {
             } else {
                 if (gsm.decCurrentPoints()) {
                     if (player.isComputer()) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException ex) {
-                            Logger.getLogger(UI.class.getName()).log(Level.SEVERE, null, ex);
-                        }
                         eventHandler.movePlayer(player.getNextPath(), false);
                     }
                 }
@@ -1089,9 +1095,8 @@ public class UI {
             return;
         }
         cardPath = cardPath.substring(0, cardPath.length() - 4) + "_I.jpg";
-        File file = new File(imgPath + cardPath);
-        System.out.println(imgPath + cardPath);
-        if (!file.exists() || file.isDirectory()) {
+        Path path = Paths.get(imgPath.substring(5) + cardPath);
+        if (!Files.exists(path)) {
             return;
         }
         Stage dialogStage = new Stage();
@@ -1147,5 +1152,48 @@ public class UI {
     
     public Stage getPrimaryStage() {
         return primaryStage;
+    }
+    
+    public void moveScrollPane(Player player) {
+        double currentX = player.getCurrentPosition().getPos().getX() / mapWidth;
+        double currentY = player.getCurrentPosition().getPos().getY() / mapHeight;
+        gamePane.setHvalue(gamePane.getHmin() + currentX);
+        gamePane.setVvalue(gamePane.getVmin() + currentY);
+    }
+    
+    public void showRule(Card card) {
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        String cardPath = card.getPath();
+        cardPath = cardPath.substring(0, cardPath.length() - 4) + "_I.jpg";
+        Path path = Paths.get(imgPath.substring(5) + cardPath);
+        if (!Files.exists(path)) {
+            gsm.applyRule(card);
+            return;
+        }
+        Stage dialogStage = new Stage();
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        dialogStage.initOwner(primaryStage);
+        BorderPane exitPane = new BorderPane();
+        HBox optionPane = new HBox();
+        Button ok = new Button(props.getProperty(PropertyType.OK_TEXT));
+        optionPane.setSpacing(10.0);
+        optionPane.getChildren().addAll(ok);
+        ImageView c = new ImageView(loadImage(cardPath));
+        exitPane.setCenter(c);
+        GridPane bottomPane = new GridPane();
+        bottomPane.add(optionPane, 0, 2);
+        bottomPane.setAlignment(Pos.CENTER);
+        exitPane.setBottom(bottomPane);
+        Scene scene = new Scene(exitPane, 500, 700);
+        dialogStage.setScene(scene);
+        ok.setOnAction((ActionEvent e) -> {
+            gsm.applyRule(card);
+            dialogStage.close();
+        });
+        dialogStage.setOnCloseRequest((WindowEvent e) -> {
+            gsm.applyRule(card);
+            dialogStage.close();
+        });
+        dialogStage.show();
     }
 }
